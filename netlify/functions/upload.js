@@ -9,7 +9,7 @@ exports.handler = async (event) => {
     const body = JSON.parse(event.body);
     console.log('STEP 1: Body parsed, unit:', body.unit, 'filename:', body.filename);
 
-    const rawKey = process.env.GOOGLE_SERVICE_KEY;
+    const rawKey = process.env.GOOGLE_SERVICE_KEY || process.env.google_service_key || process.env.GOOGLE_SERVICE_KEY_JSON;
     console.log('STEP 2: Key exists:', !!rawKey, 'Key length:', rawKey ? rawKey.length : 0);
 
     const credentials = JSON.parse(rawKey);
