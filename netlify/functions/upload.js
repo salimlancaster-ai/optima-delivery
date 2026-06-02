@@ -6,29 +6,42 @@ exports.handler = async (event) => {
   }
 
   try {
-    const { filename, unit, imageData } = JSON.parse(event.body);
+    const body = JSON.parse(event.body);
+    console.log('STEP 1: Body parsed, unit:', body.unit, 'filename:', body.filename);
 
-    const credentials = JSON.parse(process.env.GOOGLE_SERVICE_KEY);
+    const rawKey = process.env.GOOGLE_SERVICE_KEY;
+    console.log('STEP 2: Key exists:', !!rawKey, 'Key length:', rawKey ? rawKey.length : 0);
+
+    const credentials = JSON.parse(rawKey);
+    console.log('STEP 3: Credentials parsed, client_email:', credentials.client_email);
+
     const auth = new google.auth.GoogleAuth({
       credentials,
       scopes: ['https://www.googleapis.com/auth/drive.file'],
     });
+    console.log('STEP 4: Auth created');
 
     const drive = google.drive({ version: 'v3', auth });
+    console.log('STEP 5: Drive client created');
 
     const rootFolderId = await getOrCreateFolder(drive, 'Optima Signature Deliveries');
+    console.log('STEP 6: Root folder ID:', rootFolderId);
+
     const month = new Date().toISOString().slice(0, 7);
     const monthFolderId = await getOrCreateFolder(drive, month, rootFolderId);
-    const unitFolderId = await getOrCreateFolder(drive, `Unit ${unit}`, monthFolderId);
+    console.log('STEP 7: Month folder ID:', monthFolderId);
 
-    const base64Data = imageData.replace(/^data:image\/\w+;base64,/, '');
+    const unitFolderId = await getOrCreateFolder(drive, `Unit ${body.unit}`, monthFolderId);
+    console.log('STEP 8: Unit folder ID:', unitFolderId);
+
+    const base64Data = body.imageData.replace(/^data:image\/\w+;base64,/, '');
     const buffer = Buffer.from(base64Data, 'base64');
     const { Readable } = require('stream');
     const stream = Readable.from(buffer);
 
     const uploaded = await drive.files.create({
       requestBody: {
-        name: filename,
+        name: body.filename,
         parents: [unitFolderId],
       },
       media: {
@@ -37,13 +50,16 @@ exports.handler = async (event) => {
       },
       fields: 'id,name',
     });
+    console.log('STEP 9: File uploaded, ID:', uploaded.data.id);
 
     return {
       statusCode: 200,
-      body: JSON.stringify({ success: true, fileId: uploaded.data.id, filename }),
+      body: JSON.stringify({ success: true, fileId: uploaded.data.id, filename: body.filename }),
     };
 
   } catch (err) {
+    console.log('FULL ERROR:', err.message);
+    console.log('ERROR STACK:', err.stack);
     return {
       statusCode: 500,
       body: JSON.stringify({ success: false, error: err.message }),
