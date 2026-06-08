@@ -1,5 +1,7 @@
 const { google } = require('googleapis');
 
+const ROOT_FOLDER_ID = '1UOHnLXymieQLCPd9KqNsjNwjyZHA99xU';
+
 exports.handler = async (event) => {
   if (event.httpMethod !== 'POST') {
     return { statusCode: 405, body: 'Method not allowed' };
@@ -7,6 +9,8 @@ exports.handler = async (event) => {
 
   try {
     const body = JSON.parse(event.body);
+    const { filename, unit, imageData } = body;
+
     const rawKey = process.env.GOOGLE_SERVICE_KEY || process.env.google_service_key;
     const credentials = JSON.parse(rawKey);
 
@@ -17,37 +21,43 @@ exports.handler = async (event) => {
 
     const drive = google.drive({ version: 'v3', auth });
 
-    // Use supportsAllDrives and upload to folder shared with service account
-    const rootFolderId = await getOrCreateFolder(drive, 'Optima Signature Deliveries');
+    // Write directly into the shared Gmail folder — skip root creation
     const month = new Date().toISOString().slice(0, 7);
-    const monthFolderId = await getOrCreateFolder(drive, month, rootFolderId);
-    const unitFolderId = await getOrCreateFolder(drive, `Unit ${body.unit}`, monthFolderId);
+    const monthFolderId = await getOrCreateFolder(drive, month, ROOT_FOLDER_ID);
+    const unitFolderId  = await getOrCreateFolder(drive, `Unit ${unit}`, monthFolderId);
 
-    const base64Data = body.imageData.replace(/^data:image\/\w+;base64,/, '');
+    // Upload photo
+    const base64Data = imageData.replace(/^data:image\/\w+;base64,/, '');
     const buffer = Buffer.from(base64Data, 'base64');
     const { Readable } = require('stream');
     const stream = Readable.from(buffer);
 
     const uploaded = await drive.files.create({
-      supportsAllDrives: true,
       requestBody: {
-        name: body.filename,
+        name: filename,
         parents: [unitFolderId],
       },
       media: {
         mimeType: 'image/jpeg',
         body: stream,
       },
-      fields: 'id,name',
+      fields: 'id,name,webViewLink',
     });
+
+    console.log('SUCCESS — file uploaded:', uploaded.data.name, 'ID:', uploaded.data.id);
 
     return {
       statusCode: 200,
-      body: JSON.stringify({ success: true, fileId: uploaded.data.id, filename: body.filename }),
+      body: JSON.stringify({
+        success: true,
+        fileId: uploaded.data.id,
+        filename: uploaded.data.name,
+        link: uploaded.data.webViewLink,
+      }),
     };
 
   } catch (err) {
-    console.log('FULL ERROR:', err.message);
+    console.log('ERROR:', err.message);
     return {
       statusCode: 500,
       body: JSON.stringify({ success: false, error: err.message }),
@@ -55,28 +65,28 @@ exports.handler = async (event) => {
   }
 };
 
-async function getOrCreateFolder(drive, name, parentId = null) {
-  let q = `mimeType='application/vnd.google-apps.folder' and name='${name}' and trashed=false`;
-  if (parentId) q += ` and '${parentId}' in parents`;
-
+async function getOrCreateFolder(drive, name, parentId) {
+  const q = `mimeType='application/vnd.google-apps.folder' and name='${name}' and '${parentId}' in parents and trashed=false`;
   const res = await drive.files.list({
     q,
     fields: 'files(id,name)',
     spaces: 'drive',
-    supportsAllDrives: true,
-    includeItemsFromAllDrives: true,
   });
-  if (res.data.files.length > 0) return res.data.files[0].id;
 
-  const meta = {
-    name,
-    mimeType: 'application/vnd.google-apps.folder',
-    ...(parentId && { parents: [parentId] }),
-  };
+  if (res.data.files.length > 0) {
+    console.log('Found existing folder:', name, res.data.files[0].id);
+    return res.data.files[0].id;
+  }
+
   const folder = await drive.files.create({
-    supportsAllDrives: true,
-    requestBody: meta,
+    requestBody: {
+      name,
+      mimeType: 'application/vnd.google-apps.folder',
+      parents: [parentId],
+    },
     fields: 'id',
   });
+
+  console.log('Created folder:', name, folder.data.id);
   return folder.data.id;
 }
