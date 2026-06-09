@@ -1,7 +1,7 @@
 const { google } = require('googleapis');
 
-const ROOT_FOLDER_ID  = '1UOHnLXymieQLCPd9KqNsjNwjyZHA99xU';
-const CLIENT_ID       = '450769207094-j35fdsvrv947qjtfndpcmrvfk1qbtse2.apps.googleusercontent.com';
+const ROOT_FOLDER_ID = '1UOHnLXymieQLCPd9KqNsjNwjyZHA99xU';
+const CLIENT_ID      = '450769207094-j35fdsvrv947qjtfndpcmrvfk1qbtse2.apps.googleusercontent.com';
 
 exports.handler = async (event) => {
   if (event.httpMethod !== 'POST') {
@@ -11,25 +11,25 @@ exports.handler = async (event) => {
   try {
     const { filename, unit, imageData } = JSON.parse(event.body);
 
-    // Use OAuth2 with refresh token — uploads as the Gmail account owner
     const oauth2Client = new google.auth.OAuth2(
       CLIENT_ID,
       process.env.GOOGLE_CLIENT_SECRET,
       'http://localhost:3000'
     );
-
-    oauth2Client.setCredentials({
-      refresh_token: process.env.GOOGLE_REFRESH_TOKEN,
-    });
+    oauth2Client.setCredentials({ refresh_token: process.env.GOOGLE_REFRESH_TOKEN });
 
     const drive = google.drive({ version: 'v3', auth: oauth2Client });
 
-    // Build folder structure inside shared Gmail Drive folder
-    const month        = new Date().toISOString().slice(0, 7);
-    const monthFolderId = await getOrCreateFolder(drive, month, ROOT_FOLDER_ID);
-    const unitFolderId  = await getOrCreateFolder(drive, `Unit ${unit}`, monthFolderId);
+    // Folder structure: Root / YYYY-MM / YYYY-MM-DD / Unit NNN
+    const now        = new Date();
+    const month      = now.toISOString().slice(0, 7);       // 2026-06
+    const date       = now.toISOString().slice(0, 10);      // 2026-06-09
 
-    // Upload the photo
+    const monthFolderId = await getOrCreateFolder(drive, month, ROOT_FOLDER_ID);
+    const dateFolderId  = await getOrCreateFolder(drive, date, monthFolderId);
+    const unitFolderId  = await getOrCreateFolder(drive, `Unit ${unit}`, dateFolderId);
+
+    // Upload photo
     const base64Data = imageData.replace(/^data:image\/\w+;base64,/, '');
     const buffer     = Buffer.from(base64Data, 'base64');
     const { Readable } = require('stream');
