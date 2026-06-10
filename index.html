@@ -395,38 +395,50 @@ async function doSave() {
 
 // ── BACKGROUND UPLOAD — single item, non-blocking ──────────────
 async function bgUploadOne(queueId, imageData, filename, unitNum) {
-  if (!isOnline) return;
+  if (!isOnline || inProgress.has(queueId)) return;
+  inProgress.add(queueId);
   showTicker(`Unit ${unitNum}`, '');
   try {
     await uploadViaFunction(imageData, filename, unitNum);
     await dbDelete(queueId);
+    inProgress.delete(queueId);
     markUploaded(queueId, filename);
     hideTicker();
     updateBannerUI();
   } catch(e) {
+    inProgress.delete(queueId);
     hideTicker();
     // Will be picked up by bgTimer
   }
 }
 
-// ── BACKGROUND UPLOAD — full queue drain ──────────────────────
-async function drainQueue() {
-  if (!isOnline || isFlushing || !db) return;
-  const items = await dbGetAll();
-  if (!items.length) { updateBannerUI(); hideTicker(); return; }
+// ── BACKGROUND UPLOAD — full queue drain with lock ────────────
+const inProgress = new Set(); // track IDs currently uploading
 
-  showTicker('Uploading photos', `${items.length} remaining`);
+async function drainQueue() {
+  if (!isOnline || !db) return;
+  const items = await dbGetAll();
+  // Filter out anything already being uploaded
+  const pending = items.filter(i => !inProgress.has(i.id));
+  if (!pending.length) { updateBannerUI(); return; }
+
+  showTicker('Uploading photos', `${pending.length} remaining`);
   let uploaded = 0;
-  for (const item of items) {
-    if (!isOnline) break; // stop if connection drops mid-drain
+  for (const item of pending) {
+    if (!isOnline) break;
+    if (inProgress.has(item.id)) continue; // double-check before each upload
+    inProgress.add(item.id);
     try {
       await uploadViaFunction(item.imageData, item.filename, item.unit);
       await dbDelete(item.id);
+      inProgress.delete(item.id);
       uploaded++;
       markUploaded(item.id, item.filename);
-      const remaining = items.length - uploaded;
+      const remaining = pending.length - uploaded;
       if (remaining > 0) showTicker('Uploading photos', `${remaining} remaining`);
-    } catch(e) { /* leave in queue */ }
+    } catch(e) {
+      inProgress.delete(item.id); // release lock on failure so it can retry
+    }
   }
   hideTicker();
   updateBannerUI();
