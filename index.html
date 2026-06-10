@@ -5,143 +5,205 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
-<meta name="theme-color" content="#0F1923">
-<link rel="manifest" href="/manifest.json">
-<title>Optima · Delivery</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<meta name="theme-color" content="#0A0F14">
+<title>700 River · Deliveries</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
-:root{
-  --bg:#0F1923;--surface:#18242F;--surface2:#1E2E3B;
-  --border:rgba(255,255,255,0.07);
-  --gold:#C9A84C;--gold2:#F0CC7A;
-  --text:#F0EDE8;--muted:rgba(240,237,232,0.45);
-  --success:#3DD68C;--warn:#F0A500;--danger:#FF5E5E;
-  --radius:18px;--radius-sm:11px;
+:root {
+  --bg: #0A0F14;
+  --surface: #111820;
+  --surface2: #18232D;
+  --surface3: #1E2C38;
+  --border: rgba(255,255,255,0.06);
+  --border2: rgba(255,255,255,0.1);
+  --blue: #2B7FFF;
+  --blue2: #5B9FFF;
+  --blue-dim: rgba(43,127,255,0.12);
+  --text: #EEF2F7;
+  --muted: rgba(238,242,247,0.4);
+  --muted2: rgba(238,242,247,0.2);
+  --success: #34D47A;
+  --warn: #F5A623;
+  --danger: #FF5252;
+  --w1: #3B8FFF;
+  --w2: #9B6FFF;
+  --w3: #FF7A3B;
+  --prep: #3DD68C;
+  --outside: #FF5252;
+  --radius: 16px;
+  --radius-sm: 10px;
+  --radius-xs: 7px;
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-html,body{height:100%;overflow:hidden}
-body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);display:flex;flex-direction:column;height:100dvh}
+html{height:100%;overflow:hidden}
+body{font-family:'Space Grotesk',sans-serif;background:var(--bg);color:var(--text);display:flex;flex-direction:column;height:100dvh;min-height:0}
 
-.header{padding:14px 18px 12px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);flex-shrink:0}
-.logo{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;letter-spacing:1.5px;color:var(--gold);text-transform:uppercase}
-.logo span{color:rgba(201,168,76,0.5);font-weight:400}
-.header-right{display:flex;align-items:center;gap:8px}
-.conn-pill{display:flex;align-items:center;gap:6px;background:var(--surface2);border:1px solid var(--border);border-radius:20px;padding:5px 11px;font-size:11px;font-weight:500;color:var(--muted);transition:all .3s}
-.conn-pill.online{border-color:rgba(61,214,140,0.3);color:var(--success)}
-.conn-pill.offline{border-color:rgba(240,165,0,0.3);color:var(--warn)}
-.conn-dot{width:6px;height:6px;border-radius:50%;background:currentColor;animation:blink 2s infinite}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+/* ── HEADER ── */
+.header{padding:12px 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);flex-shrink:0;gap:10px}
+.header-left{display:flex;flex-direction:column;gap:1px}
+.logo{font-size:14px;font-weight:700;letter-spacing:.5px;color:var(--text)}
+.logo span{color:var(--blue);font-weight:500}
+.window-badge{display:inline-flex;align-items:center;gap:5px;font-family:'Space Mono',monospace;font-size:10px;font-weight:700;padding:3px 8px;border-radius:20px;letter-spacing:.5px;transition:all .3s}
+.window-badge.w1{background:rgba(59,143,255,0.12);color:var(--w1);border:1px solid rgba(59,143,255,0.25)}
+.window-badge.w2{background:rgba(155,111,255,0.12);color:var(--w2);border:1px solid rgba(155,111,255,0.25)}
+.window-badge.w3{background:rgba(255,122,59,0.12);color:var(--w3);border:1px solid rgba(255,122,59,0.25)}
+.window-badge.prep{background:rgba(61,214,140,0.12);color:var(--prep);border:1px solid rgba(61,214,140,0.25)}
+.window-badge.outside{background:rgba(255,82,82,0.1);color:var(--outside);border:1px solid rgba(255,82,82,0.2)}
+.window-badge.buffer{background:rgba(245,166,35,0.1);color:var(--warn);border:1px solid rgba(245,166,35,0.2)}
+.header-right{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.conn-pill{display:flex;align-items:center;gap:5px;background:var(--surface2);border:1px solid var(--border);border-radius:20px;padding:4px 10px;font-size:10px;font-weight:600;color:var(--muted);transition:all .3s}
+.conn-pill.online{border-color:rgba(52,212,122,0.3);color:var(--success)}
+.conn-pill.offline{border-color:rgba(245,166,35,0.3);color:var(--warn)}
+.conn-dot{width:5px;height:5px;border-radius:50%;background:currentColor;animation:blink 2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
 
-/* QUEUE BANNER */
-.queue-banner{display:none;align-items:center;justify-content:space-between;padding:9px 18px;background:rgba(240,165,0,0.08);border-bottom:1px solid rgba(240,165,0,0.15);flex-shrink:0}
+/* ── LIAISON SELECTOR ── */
+.liaison-bar{display:flex;align-items:center;gap:8px;padding:8px 16px;background:var(--surface);border-bottom:1px solid var(--border);flex-shrink:0}
+.liaison-label{font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--muted);white-space:nowrap}
+.liaison-select{flex:1;appearance:none;-webkit-appearance:none;background:var(--surface2);border:1px solid var(--border2);border-radius:var(--radius-xs);padding:7px 10px;font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:600;color:var(--text);outline:none;cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%23EEF2F7' opacity='.4' d='M1 1l5 5 5-5'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:28px}
+.liaison-select:focus{border-color:rgba(43,127,255,0.4)}
+.liaison-select option{background:#18232D;color:var(--text)}
+
+/* ── QUEUE BANNER ── */
+.queue-banner{display:none;align-items:center;justify-content:space-between;padding:8px 16px;background:rgba(245,166,35,0.06);border-bottom:1px solid rgba(245,166,35,0.12);flex-shrink:0}
 .queue-banner.show{display:flex}
-.queue-banner-left{display:flex;align-items:center;gap:9px}
-.queue-banner-icon{font-size:18px}
-.queue-banner-text{font-size:12px;font-weight:600;color:var(--warn)}
-.queue-banner-sub{font-size:10px;color:rgba(240,165,0,0.55);margin-top:1px}
-.btn-flush{background:var(--warn);color:#0F1923;border:none;border-radius:20px;padding:6px 13px;font-size:11px;font-weight:700;font-family:'Syne',sans-serif;cursor:pointer;white-space:nowrap;transition:all .2s}
-.btn-flush:hover{background:var(--gold2)}
+.queue-banner-left{display:flex;align-items:center;gap:8px}
+.queue-banner-text{font-size:11px;font-weight:600;color:var(--warn)}
+.queue-banner-sub{font-size:10px;color:rgba(245,166,35,0.5);margin-top:1px}
+.btn-flush{background:var(--warn);color:#0A0F14;border:none;border-radius:20px;padding:5px 12px;font-size:11px;font-weight:700;font-family:'Space Grotesk',sans-serif;cursor:pointer;transition:all .2s}
 .btn-flush:disabled{opacity:.4;cursor:wait}
 
-/* UPLOAD TICKER */
-.upload-ticker{display:none;align-items:center;gap:8px;padding:5px 18px;background:rgba(61,214,140,0.05);border-bottom:1px solid rgba(61,214,140,0.1);flex-shrink:0}
+/* ── UPLOAD TICKER ── */
+.upload-ticker{display:none;align-items:center;gap:7px;padding:5px 16px;background:rgba(52,212,122,0.04);border-bottom:1px solid rgba(52,212,122,0.08);flex-shrink:0}
 .upload-ticker.show{display:flex}
-.ticker-dot{width:6px;height:6px;border-radius:50%;background:var(--success);animation:pulse 1s infinite}
-@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.7)}}
-.ticker-text{font-size:10px;color:rgba(61,214,140,0.7);font-weight:500;flex:1}
+.ticker-dot{width:5px;height:5px;border-radius:50%;background:var(--success);animation:pulse 1s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.3;transform:scale(.6)}}
+.ticker-text{font-size:10px;color:rgba(52,212,122,0.65);font-weight:500;flex:1}
 .ticker-count{font-size:10px;color:var(--muted)}
 
-.main{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:14px}
+/* ── MAIN ── */
+.main{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:12px;min-height:0;-webkit-overflow-scrolling:touch}
 
-.step{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;transition:border-color .25s}
-.step.active{border-color:rgba(201,168,76,0.35)}
-.step.done{border-color:rgba(61,214,140,0.25)}
-.step-head{display:flex;align-items:center;gap:12px;padding:14px 16px}
-.step-num{width:28px;height:28px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:13px;font-weight:700;background:var(--surface2);color:var(--muted);border:1px solid var(--border);transition:all .25s}
-.step.active .step-num{background:var(--gold);color:#0F1923;border-color:var(--gold)}
-.step.done .step-num{background:var(--success);color:#0F1923;border-color:var(--success)}
-.step-label{font-size:13px;font-weight:500;color:var(--muted);transition:color .25s}
+/* ── STEPS ── */
+.step{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);transition:border-color .2s}
+.step.active{border-color:rgba(43,127,255,0.3)}
+.step.done{border-color:rgba(52,212,122,0.2)}
+.step-head{display:flex;align-items:center;gap:10px;padding:13px 14px}
+.step-num{width:26px;height:26px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-size:11px;font-weight:700;background:var(--surface2);color:var(--muted);border:1px solid var(--border);transition:all .2s}
+.step.active .step-num{background:var(--blue);color:#fff;border-color:var(--blue)}
+.step.done .step-num{background:var(--success);color:#0A0F14;border-color:var(--success)}
+.step-label{font-size:13px;font-weight:600;color:var(--muted);transition:color .2s;flex:1}
 .step.active .step-label,.step.done .step-label{color:var(--text)}
-.step-check{margin-left:auto;font-size:16px;opacity:0;transition:opacity .25s}
+.step-check{font-size:14px;opacity:0;transition:opacity .2s;color:var(--success)}
 .step.done .step-check{opacity:1}
-.step-body{padding:0 16px 16px}
+.step-body{padding:0 14px 14px}
 
-.unit-input-wrap{position:relative}
-.unit-prefix{position:absolute;left:14px;top:50%;transform:translateY(-50%);font-family:'Syne',sans-serif;font-size:18px;font-weight:700;color:var(--gold);pointer-events:none}
-input[type=text]{width:100%;padding:14px 14px 14px 36px;background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--radius-sm);font-family:'Syne',sans-serif;font-size:22px;font-weight:700;color:var(--text);letter-spacing:2px;outline:none;transition:border-color .2s;-webkit-appearance:none}
-input[type=text]::placeholder{color:rgba(240,237,232,0.2);letter-spacing:1px;font-size:18px}
-input[type=text]:focus{border-color:var(--gold)}
-.unit-hint{font-size:11px;color:var(--muted);margin-top:7px;padding-left:2px}
-.filename-preview{display:none;margin-top:10px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 14px}
+/* ── UNIT INPUT ── */
+.unit-row{display:flex;gap:8px}
+.unit-input-wrap{flex:1;position:relative}
+.unit-prefix{position:absolute;left:13px;top:50%;transform:translateY(-50%);font-family:'Space Mono',monospace;font-size:17px;font-weight:700;color:var(--blue);pointer-events:none}
+input[type=text]{width:100%;padding:13px 13px 13px 34px;background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--radius-sm);font-family:'Space Mono',monospace;font-size:20px;font-weight:700;color:var(--text);letter-spacing:2px;outline:none;transition:border-color .2s;-webkit-appearance:none}
+input[type=text]::placeholder{color:var(--muted2);letter-spacing:1px;font-size:16px}
+input[type=text]:focus{border-color:rgba(43,127,255,0.5)}
+.btn-cart{flex-shrink:0;padding:13px 14px;background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:12px;font-weight:700;color:var(--muted);font-family:'Space Grotesk',sans-serif;cursor:pointer;transition:all .2s;white-space:nowrap}
+.btn-cart.active{border-color:rgba(43,127,255,0.4);color:var(--blue2);background:var(--blue-dim)}
+.unit-hint{font-size:11px;color:var(--muted);margin-top:7px}
+.filename-preview{display:none;margin-top:10px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 13px}
 .filename-preview.show{display:block}
-.filename-label{font-family:'DM Sans',sans-serif;font-size:10px;font-weight:500;letter-spacing:1.2px;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
-.filename-text{font-family:monospace;font-size:12px;color:var(--gold2);word-break:break-all}
+.filename-label{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+.filename-text{font-family:'Space Mono',monospace;font-size:11px;color:var(--blue2);word-break:break-all}
+.window-row{display:flex;align-items:center;gap:6px;margin-top:8px}
+.window-info-label{font-size:10px;color:var(--muted);font-weight:500}
 
-.photo-zone{width:100%;min-height:180px;background:var(--surface2);border:2px dashed rgba(201,168,76,0.2);border-radius:var(--radius-sm);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;cursor:pointer;position:relative;overflow:hidden;transition:border-color .2s}
-.photo-zone:hover{border-color:rgba(201,168,76,0.5)}
+/* ── PHOTO ZONE ── */
+.photo-zone{width:100%;min-height:140px;background:var(--surface2);border:2px dashed rgba(43,127,255,0.2);border-radius:var(--radius-sm);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:9px;cursor:pointer;position:relative;overflow:hidden;transition:border-color .2s}
+.photo-zone:hover{border-color:rgba(43,127,255,0.4)}
 .photo-zone img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-.photo-zone-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(15,25,35,0.9) 0%,transparent 50%);display:flex;align-items:flex-end;padding:14px;opacity:0;transition:opacity .2s}
+.photo-zone-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(10,15,20,0.92) 0%,transparent 55%);display:flex;align-items:flex-end;padding:12px;opacity:0;transition:opacity .2s}
 .photo-zone.has-photo:hover .photo-zone-overlay{opacity:1}
-.photo-zone-icon{font-size:36px;opacity:.4}
-.photo-zone-text{font-size:13px;font-weight:500;color:var(--muted)}
-.photo-zone-sub{font-size:11px;color:rgba(240,237,232,0.25)}
+.photo-zone-icon{font-size:32px;opacity:.35}
+.photo-zone-text{font-size:13px;font-weight:600;color:var(--muted)}
+.photo-zone-sub{font-size:11px;color:var(--muted2)}
 .retake-btn{font-size:12px;font-weight:600;color:var(--text)}
 #fileInput{display:none}
-.photo-btns{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
-.btn-ghost{padding:12px;border-radius:var(--radius-sm);background:var(--surface2);border:1px solid var(--border);color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;transition:border-color .2s}
-.btn-ghost:hover{border-color:rgba(201,168,76,0.3)}
+.photo-btns{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:9px}
+.btn-ghost{padding:11px;border-radius:var(--radius-sm);background:var(--surface2);border:1px solid var(--border);color:var(--text);font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:border-color .2s}
+.btn-ghost:hover{border-color:var(--border2)}
 .btn-ghost:active{transform:scale(.97)}
 
-.btn-save{width:100%;padding:16px;background:var(--gold);border:none;border-radius:var(--radius-sm);font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:#0F1923;letter-spacing:.5px;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:9px}
-.btn-save:disabled{background:rgba(201,168,76,0.25);color:rgba(15,25,35,0.5);cursor:not-allowed}
-.btn-save:not(:disabled):hover{background:var(--gold2)}
+/* ── SAVE BTN ── */
+.btn-save{width:100%;padding:15px;background:var(--blue);border:none;border-radius:var(--radius-sm);font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:700;color:#fff;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:8px}
+.btn-save:disabled{background:rgba(43,127,255,0.2);color:rgba(255,255,255,0.25);cursor:not-allowed}
+.btn-save:not(:disabled):hover{background:var(--blue2)}
 .btn-save:not(:disabled):active{transform:scale(.98)}
 .save-note{font-size:10px;color:var(--muted);text-align:center;margin-top:7px}
 
-.confirm-screen{display:none;flex-direction:column;align-items:center;padding:20px;text-align:center;gap:10px}
+/* ── CONFIRM ── */
+.confirm-screen{display:none;flex-direction:column;align-items:center;padding:20px 14px;text-align:center;gap:9px}
 .confirm-screen.show{display:flex}
-.confirm-icon{width:60px;height:60px;border-radius:50%;background:rgba(61,214,140,0.12);border:2px solid rgba(61,214,140,0.3);display:flex;align-items:center;justify-content:center;font-size:26px;animation:popIn .35s cubic-bezier(.34,1.56,.64,1)}
+.confirm-icon{width:56px;height:56px;border-radius:50%;background:rgba(52,212,122,0.1);border:2px solid rgba(52,212,122,0.3);display:flex;align-items:center;justify-content:center;font-size:24px;animation:popIn .3s cubic-bezier(.34,1.56,.64,1)}
 @keyframes popIn{from{transform:scale(0);opacity:0}to{transform:scale(1);opacity:1}}
-.confirm-title{font-family:'Syne',sans-serif;font-size:17px;font-weight:700;color:var(--success)}
-.confirm-filename{font-family:monospace;font-size:11px;color:var(--muted);word-break:break-all;max-width:280px}
-.confirm-status{font-size:11px;padding:4px 12px;border-radius:20px;font-weight:500}
-.confirm-status.uploading{background:rgba(240,165,0,0.1);color:var(--warn)}
-.confirm-status.uploaded{background:rgba(61,214,140,0.1);color:var(--success)}
-.btn-next{margin-top:6px;width:100%;padding:15px;background:#1B2A4A;border:1px solid rgba(201,168,76,0.3);border-radius:var(--radius-sm);font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:var(--gold);cursor:pointer;transition:all .2s;letter-spacing:.3px}
-.btn-next:hover{background:rgba(201,168,76,0.08)}
+.confirm-title{font-size:17px;font-weight:700;color:var(--success)}
+.confirm-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:center}
+.confirm-filename{font-family:'Space Mono',monospace;font-size:10px;color:var(--muted);word-break:break-all;max-width:280px}
+.confirm-status{font-size:11px;padding:4px 10px;border-radius:20px;font-weight:600}
+.confirm-status.uploading{background:rgba(245,166,35,0.1);color:var(--warn)}
+.confirm-status.uploaded{background:rgba(52,212,122,0.1);color:var(--success)}
+.btn-next{margin-top:4px;width:100%;padding:14px;background:var(--surface2);border:1px solid rgba(43,127,255,0.25);border-radius:var(--radius-sm);font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:700;color:var(--blue2);cursor:pointer;transition:all .2s}
+.btn-next:hover{background:var(--blue-dim)}
 
+/* ── LOG ── */
 .log-section{flex-shrink:0}
-.log-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
-.log-title{font-family:'Syne',sans-serif;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted)}
-.log-count{font-size:11px;color:var(--muted)}
-.log-list{display:flex;flex-direction:column;gap:6px}
-.log-item{display:flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;transition:border-color .3s}
-.log-item.just-added{animation:slideIn .25s ease}
-@keyframes slideIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
-.log-thumb{width:36px;height:36px;border-radius:7px;object-fit:cover;border:1px solid var(--border);flex-shrink:0}
-.log-unit{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:var(--text)}
-.log-file{font-family:monospace;font-size:10px;color:var(--muted);margin-top:1px;word-break:break-all}
-.log-badge{margin-left:auto;flex-shrink:0;font-size:9px;font-weight:700;padding:3px 8px;border-radius:20px;white-space:nowrap}
-.badge-uploading{background:rgba(240,165,0,0.1);color:var(--warn)}
-.badge-uploaded{background:rgba(61,214,140,0.1);color:var(--success)}
-.log-empty{font-size:12px;color:var(--muted);text-align:center;padding:20px 0}
+.log-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:9px}
+.log-title{font-family:'Space Mono',monospace;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted)}
+.log-count{font-size:10px;color:var(--muted)}
+.log-list{display:flex;flex-direction:column;gap:5px}
+.log-item{display:flex;align-items:center;gap:9px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:9px 11px;transition:border-color .3s}
+.log-item.just-added{animation:slideIn .2s ease}
+@keyframes slideIn{from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:translateY(0)}}
+.log-thumb{width:34px;height:34px;border-radius:6px;object-fit:cover;border:1px solid var(--border);flex-shrink:0}
+.log-unit{font-family:'Space Mono',monospace;font-size:12px;font-weight:700;color:var(--text)}
+.log-file{font-family:'Space Mono',monospace;font-size:9px;color:var(--muted);margin-top:1px;word-break:break-all}
+.log-meta{display:flex;align-items:center;gap:5px;margin-top:2px}
+.log-liaison{font-size:9px;color:var(--muted2);font-weight:500}
+.log-badge{margin-left:auto;flex-shrink:0;font-size:9px;font-weight:700;padding:2px 7px;border-radius:20px;white-space:nowrap}
+.badge-uploading{background:rgba(245,166,35,0.1);color:var(--warn)}
+.badge-uploaded{background:rgba(52,212,122,0.1);color:var(--success)}
+.log-empty{font-size:12px;color:var(--muted);text-align:center;padding:18px 0}
+
+/* ── WINDOW LEGEND (bottom of log) ── */
+.window-legend{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;padding-top:10px;border-top:1px solid var(--border)}
+.legend-item{display:flex;align-items:center;gap:4px;font-size:10px;color:var(--muted);font-weight:500}
+.legend-dot{width:7px;height:7px;border-radius:50%}
 </style>
 </head>
 <body>
 
 <div class="header">
-  <div class="logo">Optima <span>/</span> Delivery</div>
+  <div class="header-left">
+    <div class="logo">700 River <span>/ Deliveries</span></div>
+    <div id="windowBadge" class="window-badge outside">— Outside Window —</div>
+  </div>
   <div class="header-right">
     <div class="conn-pill" id="connPill">
       <div class="conn-dot"></div>
-      <span id="connLabel">Checking…</span>
+      <span id="connLabel">…</span>
     </div>
   </div>
 </div>
 
+<div class="liaison-bar">
+  <div class="liaison-label">Liaison</div>
+  <select class="liaison-select" id="liaisonSelect" onchange="onLiaisonChange()">
+    <option value="">— Select your name —</option>
+    <option value="Haleyna">Haleyna</option>
+    <option value="Shellby">Shellby</option>
+    <option value="Myka">Myka</option>
+  </select>
+</div>
+
 <div class="queue-banner" id="queueBanner">
   <div class="queue-banner-left">
-    <div class="queue-banner-icon">📦</div>
     <div>
       <div class="queue-banner-text" id="bannerText">Photos pending</div>
       <div class="queue-banner-sub" id="bannerSub">Uploading automatically</div>
@@ -161,19 +223,26 @@ input[type=text]:focus{border-color:var(--gold)}
   <div class="step active" id="step1">
     <div class="step-head">
       <div class="step-num">1</div>
-      <div class="step-label">Enter unit number</div>
+      <div class="step-label">Unit number</div>
       <div class="step-check">✓</div>
     </div>
     <div class="step-body">
-      <div class="unit-input-wrap">
-        <div class="unit-prefix">U</div>
-        <input type="text" id="unitInput" inputmode="numeric" pattern="[0-9]*"
-          placeholder="301" maxlength="4" autocomplete="off" oninput="onUnitInput()">
+      <div class="unit-row">
+        <div class="unit-input-wrap">
+          <div class="unit-prefix">#</div>
+          <input type="text" id="unitInput" inputmode="numeric" pattern="[0-9]*"
+            placeholder="3402" maxlength="4" autocomplete="off" oninput="onUnitInput()">
+        </div>
+        <button class="btn-cart" id="cartBtn" onclick="toggleCart()">🛒 Cart</button>
       </div>
-      <div class="unit-hint" id="unitHint">Enter the 3–4 digit unit number</div>
+      <div class="unit-hint" id="unitHint">Enter 3–4 digit unit or tap Cart for pre-departure photo</div>
       <div class="filename-preview" id="filenamePreview">
-        <div class="filename-label">File will be saved as</div>
+        <div class="filename-label">Filename</div>
         <div class="filename-text" id="filenameText"></div>
+        <div class="window-row">
+          <div class="window-info-label">Window:</div>
+          <div id="windowInline" class="window-badge outside">—</div>
+        </div>
       </div>
     </div>
   </div>
@@ -188,7 +257,7 @@ input[type=text]:focus{border-color:var(--gold)}
       <div class="photo-zone" id="photoZone" onclick="triggerCamera()">
         <div class="photo-zone-icon">📷</div>
         <div class="photo-zone-text">Tap to open camera</div>
-        <div class="photo-zone-sub">Photo taken inside the unit</div>
+        <div class="photo-zone-sub">Back camera · package at door</div>
         <div class="photo-zone-overlay"><span class="retake-btn">📷 Retake</span></div>
       </div>
       <input type="file" id="fileInput" accept="image/*" capture="environment" onchange="onPhotoSelected(event)">
@@ -208,15 +277,18 @@ input[type=text]:focus{border-color:var(--gold)}
     <div class="step-body">
       <button class="btn-save" id="saveBtn" onclick="doSave()" disabled>
         <span>✓</span>
-        <span>Save & Next Delivery</span>
+        <span>Save &amp; Next Delivery</span>
       </button>
-      <div class="save-note">Saves instantly · uploads automatically in background</div>
+      <div class="save-note" id="saveNote">Select liaison · enter unit · take photo</div>
     </div>
   </div>
 
   <div class="confirm-screen" id="confirmScreen">
     <div class="confirm-icon">✓</div>
     <div class="confirm-title">Saved — keep moving</div>
+    <div class="confirm-meta">
+      <div id="confirmWindow" class="window-badge outside"></div>
+    </div>
     <div class="confirm-filename" id="confirmFilename"></div>
     <div class="confirm-status uploading" id="confirmStatus">⏳ Uploading in background</div>
     <button class="btn-next" onclick="resetFlow()">+ Next delivery</button>
@@ -230,124 +302,215 @@ input[type=text]:focus{border-color:var(--gold)}
     <div class="log-list" id="logList">
       <div class="log-empty" id="logEmpty">No deliveries yet this round</div>
     </div>
+    <div class="window-legend">
+      <div class="legend-item"><div class="legend-dot" style="background:#3B8FFF"></div>W1 11AM–1PM</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#9B6FFF"></div>W2 2–4PM</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#FF7A3B"></div>W3 5–6PM</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#F5A623"></div>Buffer</div>
+    </div>
   </div>
 
 </div>
 
 <script>
-// ── STATE ──────────────────────────────────────────────────────
-let unit = '', photoBlob = null, photoURL = null;
+// ── CONFIG ────────────────────────────────────────────────────
+const LIAISONS = ['Haleyna', 'Shellby', 'Myka'];
+
+// ── DELIVERY WINDOW DETECTION ─────────────────────────────────
+function detectWindow(date) {
+  const d = date || new Date();
+  const day = d.getDay(); // 0=Sun, 6=Sat
+  const mins = d.getHours() * 60 + d.getMinutes();
+  const t = m => m;
+
+  if (day === 0) { // Sunday
+    if (mins >= t(660) && mins < t(780)) return { code:'SUN-W1', label:'Sun W1', cls:'w1' };
+    if (mins >= t(840) && mins < t(900)) return { code:'SUN-W2', label:'Sun W2', cls:'w2' };
+    return { code:'SUN-OUT', label:'Outside Window', cls:'outside' };
+  }
+  if (day === 6) { // Saturday
+    if (mins >= t(660) && mins < t(780)) return { code:'SAT-W1', label:'Sat W1', cls:'w1' };
+    if (mins >= t(840) && mins < t(930)) return { code:'SAT-W2', label:'Sat W2', cls:'w2' };
+    return { code:'SAT-OUT', label:'Outside Window', cls:'outside' };
+  }
+  // Mon–Fri
+  if (mins >= t(600) && mins < t(660))  return { code:'PREP',    label:'Prep',          cls:'prep' };
+  if (mins >= t(660) && mins < t(780))  return { code:'W1',      label:'W1 · 11AM–1PM', cls:'w1' };
+  if (mins >= t(780) && mins < t(840))  return { code:'BUFFER1', label:'Buffer 1–2PM',  cls:'buffer' };
+  if (mins >= t(840) && mins < t(960))  return { code:'W2',      label:'W2 · 2–4PM',    cls:'w2' };
+  if (mins >= t(960) && mins < t(1020)) return { code:'BUFFER2', label:'Buffer 4–5PM',  cls:'buffer' };
+  if (mins >= t(1020)&& mins < t(1080)) return { code:'W3',      label:'W3 · 5–6PM',    cls:'w3' };
+  return { code:'OUTSIDE', label:'Outside Window', cls:'outside' };
+}
+
+function updateWindowBadge() {
+  const w = detectWindow();
+  const badge = document.getElementById('windowBadge');
+  badge.textContent = w.label;
+  badge.className = 'window-badge ' + w.cls;
+}
+setInterval(updateWindowBadge, 30000);
+
+// ── STATE ────────────────────────────────────────────────────
+let unit = '', isCart = false, photoBlob = null, photoURL = null;
+let liaison = localStorage.getItem('liaison_700') || '';
 let isOnline = navigator.onLine;
 let sessionLog = [];
 let db = null;
 let bgTimer = null;
 let isFlushing = false;
 let currentConfirmFilename = null;
+const inProgress = new Set();
 
-// ── INDEXEDDB ──────────────────────────────────────────────────
+// ── INDEXEDDB ────────────────────────────────────────────────
 function openDB() {
   return new Promise((res, rej) => {
-    const req = indexedDB.open('optima_v5', 1);
+    const req = indexedDB.open('river700_v1', 1);
     req.onupgradeneeded = e => e.target.result.createObjectStore('queue', { keyPath: 'id', autoIncrement: true });
     req.onsuccess = e => { db = e.target.result; res(); };
-    req.onerror   = e => rej(e);
+    req.onerror = e => rej(e);
   });
 }
 const dbAdd    = item => new Promise((res,rej) => { const r=db.transaction('queue','readwrite').objectStore('queue').add(item); r.onsuccess=()=>res(r.result); r.onerror=rej; });
 const dbGetAll = ()   => new Promise((res,rej) => { const r=db.transaction('queue','readonly').objectStore('queue').getAll(); r.onsuccess=()=>res(r.result); r.onerror=rej; });
 const dbDelete = id   => new Promise((res,rej) => { const r=db.transaction('queue','readwrite').objectStore('queue').delete(id); r.onsuccess=()=>res(); r.onerror=rej; });
 
-// ── CONNECTIVITY — react to every possible signal change ───────
+// ── FILENAME + FOLDER ────────────────────────────────────────
+function buildFilename(unitOrCart, capturedAt) {
+  const d = capturedAt || new Date();
+  const date = d.toISOString().slice(0,10);
+  const hh = String(d.getHours()).padStart(2,'0');
+  const mm = String(d.getMinutes()).padStart(2,'0');
+  const w  = detectWindow(d);
+  const liaison_code = liaison || 'XX';
+  if (unitOrCart === 'CART') {
+    return `${date}_${hh}-${mm}_${w.code}_CartPhoto_${liaison_code}.jpg`;
+  }
+  return `${date}_${hh}-${mm}_${w.code}_Unit${unitOrCart}_${liaison_code}.jpg`;
+}
+
+function buildFolderPath(unitOrCart, capturedAt) {
+  const d = capturedAt || new Date();
+  const month = d.toISOString().slice(0,7);  // 2026-06
+  const date  = d.toISOString().slice(0,10); // 2026-06-10
+  const w     = detectWindow(d);
+  const sub   = unitOrCart === 'CART' ? 'Cart Photos' : `Unit ${unitOrCart}`;
+  return { month, date, window: w.code, sub };
+}
+
+// ── CONNECTIVITY ────────────────────────────────────────────
 function updateConnUI() {
   const pill  = document.getElementById('connPill');
   const label = document.getElementById('connLabel');
   pill.className = isOnline ? 'conn-pill online' : 'conn-pill offline';
-  label.textContent = isOnline ? 'Connected' : 'Offline';
+  label.textContent = isOnline ? 'Online' : 'Offline';
   updateBannerUI();
 }
-
-// Every possible trigger to attempt upload
-window.addEventListener('online', () => {
-  isOnline = true; updateConnUI(); tryBgUpload('online event');
-});
-window.addEventListener('offline', () => {
-  isOnline = false; updateConnUI();
-});
-// Screen unlock / app focus
+window.addEventListener('online',  () => { isOnline=true;  updateConnUI(); tryBgUpload(); });
+window.addEventListener('offline', () => { isOnline=false; updateConnUI(); });
 document.addEventListener('visibilitychange', () => {
-  if (document.visibilityState === 'visible') {
-    checkConnectivity().then(() => tryBgUpload('visibility change'));
-  }
+  if (document.visibilityState === 'visible') checkConnectivity().then(() => tryBgUpload());
 });
-// Page focus (switching back to tab/app)
-window.addEventListener('focus', () => {
-  checkConnectivity().then(() => tryBgUpload('window focus'));
-});
-// Touch — any interaction might mean they just walked into range
+window.addEventListener('focus', () => checkConnectivity().then(() => tryBgUpload()));
 document.addEventListener('touchstart', debounce(() => {
-  if (!isOnline) checkConnectivity().then(() => { if (isOnline) tryBgUpload('touch'); });
+  if (!isOnline) checkConnectivity().then(() => { if (isOnline) tryBgUpload(); });
 }, 3000), { passive: true });
 
-// Active connectivity probe — don't trust navigator.onLine alone
 async function checkConnectivity() {
   try {
     const r = await fetch('/.netlify/functions/ping', { method:'HEAD', cache:'no-store' });
-    if (r.ok || r.status === 405) { isOnline = true; updateConnUI(); }
-  } catch(e) {
-    // Still offline
-  }
+    if (r.ok || r.status === 405) { isOnline=true; updateConnUI(); }
+  } catch(e) {}
 }
 
-// ── FILENAME ───────────────────────────────────────────────────
-function buildFilename(u) {
-  const now = new Date();
-  const d = now.toISOString().slice(0,10);
-  const h = String(now.getHours()).padStart(2,'0');
-  const m = String(now.getMinutes()).padStart(2,'0');
-  return `U${u}_${d}_${h}-${m}.jpg`;
-}
-
-// ── NETLIFY UPLOAD ─────────────────────────────────────────────
-async function uploadViaFunction(imageData, filename, unitNum) {
+// ── UPLOAD ──────────────────────────────────────────────────
+async function uploadViaFunction(imageData, filename, unitNum, folderPath, liaisonName) {
   const resp = await fetch('/.netlify/functions/upload', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ filename, unit: unitNum, imageData }),
+    body: JSON.stringify({ filename, unit: unitNum, imageData, folderPath, liaison: liaisonName }),
   });
   const data = await resp.json();
   if (!data.success) throw new Error(data.error || 'Upload failed');
   return data;
 }
 
-// ── STEP 1 ─────────────────────────────────────────────────────
+// ── LIAISON ─────────────────────────────────────────────────
+function onLiaisonChange() {
+  liaison = document.getElementById('liaisonSelect').value;
+  localStorage.setItem('liaison_700', liaison);
+  updateSaveBtn();
+  updateFilenamePreview();
+}
+
+// ── STEP 1 ───────────────────────────────────────────────────
 function onUnitInput() {
+  if (isCart) toggleCart(false);
   unit = document.getElementById('unitInput').value.replace(/\D/g,'');
   document.getElementById('unitInput').value = unit;
   const valid = unit.length >= 3;
   document.getElementById('step1').classList.toggle('done', valid);
   document.getElementById('step2').classList.toggle('active', valid);
   document.getElementById('filenamePreview').classList.toggle('show', valid);
-  if (valid) document.getElementById('filenameText').textContent = buildFilename(unit);
+  if (valid) updateFilenamePreview();
   document.getElementById('unitHint').textContent = valid
     ? `Floor ${unit[0]} · Unit ${unit}`
-    : 'Enter the 3–4 digit unit number';
+    : 'Enter 3–4 digit unit or tap Cart for pre-departure photo';
   updateSaveBtn();
 }
 
-// ── STEP 2 ─────────────────────────────────────────────────────
+function toggleCart(forceState) {
+  isCart = forceState !== undefined ? forceState : !isCart;
+  const btn = document.getElementById('cartBtn');
+  const input = document.getElementById('unitInput');
+  if (isCart) {
+    unit = '';
+    input.value = '';
+    input.disabled = true;
+    input.placeholder = 'CART';
+    btn.classList.add('active');
+    document.getElementById('step1').classList.add('done');
+    document.getElementById('step2').classList.add('active');
+    document.getElementById('filenamePreview').classList.add('show');
+    document.getElementById('unitHint').textContent = 'Pre-departure cart photo';
+    updateFilenamePreview();
+  } else {
+    input.disabled = false;
+    input.placeholder = '3402';
+    btn.classList.remove('active');
+    document.getElementById('step1').classList.remove('done');
+    document.getElementById('step2').classList.remove('active');
+    document.getElementById('filenamePreview').classList.remove('show');
+    document.getElementById('unitHint').textContent = 'Enter 3–4 digit unit or tap Cart for pre-departure photo';
+  }
+  updateSaveBtn();
+}
+
+function updateFilenamePreview() {
+  const key = isCart ? 'CART' : unit;
+  if (!key && !isCart) return;
+  const fn = buildFilename(key);
+  const w  = detectWindow();
+  document.getElementById('filenameText').textContent = fn;
+  const wi = document.getElementById('windowInline');
+  wi.textContent = w.label;
+  wi.className = 'window-badge ' + w.cls;
+}
+
+// ── STEP 2 ───────────────────────────────────────────────────
 function triggerCamera() {
-  if (unit.length < 3) { flashStep('step1'); return; }
+  if (!isCart && unit.length < 3) { flashStep('step1'); return; }
   const inp = document.getElementById('fileInput');
   inp.setAttribute('capture','environment'); inp.click();
 }
 function triggerGallery() {
-  if (unit.length < 3) { flashStep('step1'); return; }
+  if (!isCart && unit.length < 3) { flashStep('step1'); return; }
   document.getElementById('fileInput').removeAttribute('capture');
   document.getElementById('fileInput').click();
 }
 function flashStep(id) {
   const el = document.getElementById(id);
-  el.style.borderColor='rgba(255,94,94,0.6)';
+  el.style.borderColor='rgba(255,82,82,0.5)';
   setTimeout(()=>el.style.borderColor='',1200);
 }
 function onPhotoSelected(e) {
@@ -361,48 +524,66 @@ function onPhotoSelected(e) {
   document.getElementById('step3').classList.add('active');
   updateSaveBtn();
 }
+
 function updateSaveBtn() {
-  document.getElementById('saveBtn').disabled = !(unit.length >= 3 && photoBlob);
+  const ready = liaison && (isCart || unit.length >= 3) && photoBlob;
+  document.getElementById('saveBtn').disabled = !ready;
+  if (!liaison) {
+    document.getElementById('saveNote').textContent = 'Select your name above first';
+  } else if (!isCart && unit.length < 3) {
+    document.getElementById('saveNote').textContent = 'Enter unit number to continue';
+  } else if (!photoBlob) {
+    document.getElementById('saveNote').textContent = 'Take a photo to continue';
+  } else {
+    document.getElementById('saveNote').textContent = 'Saves instantly · uploads in background';
+  }
 }
 
-// ── STEP 3: INSTANT SAVE ───────────────────────────────────────
+// ── STEP 3: SAVE ─────────────────────────────────────────────
 async function doSave() {
-  const filename = buildFilename(unit);
-  const capUnit  = unit, capBlob = photoBlob, capURL = photoURL;
-  // Compress photo first — reduces 4-8MB iPhone photo to ~150KB, prevents Safari crash
-  // compressPhoto returns base64 directly via canvas — no separate blobToBase64 needed
-  const b64 = await compressPhoto(capBlob);
+  const capturedAt = new Date();
+  const key      = isCart ? 'CART' : unit;
+  const filename = buildFilename(key, capturedAt);
+  const folder   = buildFolderPath(key, capturedAt);
+  const capBlob  = photoBlob, capURL = photoURL;
+  const capLiaison = liaison;
+  const b64 = await blobToBase64(capBlob);
 
-  // Save to device queue immediately
   const queueId = await dbAdd({
-    filename, unit: capUnit, imageData: b64,
-    thumbURL: capURL, savedAt: new Date().toISOString()
+    filename, unit: key, imageData: b64,
+    thumbURL: capURL, savedAt: capturedAt.toISOString(),
+    folderPath: folder, liaison: capLiaison
   });
 
-  // Log as uploading
-  sessionLog.unshift({ id: queueId, unitNum: capUnit, filename, thumbURL: capURL, status: 'uploading' });
+  sessionLog.unshift({ id: queueId, unitNum: key, filename, thumbURL: capURL, status: 'uploading', liaison: capLiaison, window: detectWindow(capturedAt) });
   renderLog();
 
-  // Show confirm immediately
   currentConfirmFilename = filename;
-  ['step1','step2','step3'].forEach(id => document.getElementById(id).style.display = 'none');
+  const w = detectWindow(capturedAt);
+  // Hide steps, show confirm
+  ['step1','step2','step3'].forEach(id => {
+    document.getElementById(id).style.display = 'none';
+  });
   document.getElementById('confirmScreen').classList.add('show');
+  // Ensure main is still scrollable
+  document.getElementById('mainView').style.overflow = 'auto';
   document.getElementById('confirmFilename').textContent = filename;
   document.getElementById('confirmStatus').textContent = '⏳ Uploading in background';
   document.getElementById('confirmStatus').className = 'confirm-status uploading';
+  const cw = document.getElementById('confirmWindow');
+  cw.textContent = w.label; cw.className = 'window-badge ' + w.cls;
   updateBannerUI();
 
-  // Fire background upload — completely non-blocking
-  bgUploadOne(queueId, b64, filename, capUnit);
+  bgUploadOne(queueId, b64, filename, key, folder, capLiaison);
 }
 
-// ── BACKGROUND UPLOAD — single item, non-blocking ──────────────
-async function bgUploadOne(queueId, imageData, filename, unitNum) {
+// ── BACKGROUND UPLOAD ────────────────────────────────────────
+async function bgUploadOne(queueId, imageData, filename, unitNum, folderPath, liaisonName) {
   if (!isOnline || inProgress.has(queueId)) return;
   inProgress.add(queueId);
-  showTicker(`Unit ${unitNum}`, '');
+  showTicker(isCart ? 'Cart photo' : `Unit ${unitNum}`, '');
   try {
-    await uploadViaFunction(imageData, filename, unitNum);
+    await uploadViaFunction(imageData, filename, unitNum, folderPath, liaisonName);
     await dbDelete(queueId);
     inProgress.delete(queueId);
     markUploaded(queueId, filename);
@@ -411,36 +592,30 @@ async function bgUploadOne(queueId, imageData, filename, unitNum) {
   } catch(e) {
     inProgress.delete(queueId);
     hideTicker();
-    // Will be picked up by bgTimer
   }
 }
 
-// ── BACKGROUND UPLOAD — full queue drain with lock ────────────
-const inProgress = new Set(); // track IDs currently uploading
-
 async function drainQueue() {
   if (!isOnline || !db) return;
-  const items = await dbGetAll();
-  // Filter out anything already being uploaded
+  const items  = await dbGetAll();
   const pending = items.filter(i => !inProgress.has(i.id));
   if (!pending.length) { updateBannerUI(); return; }
-
   showTicker('Uploading photos', `${pending.length} remaining`);
   let uploaded = 0;
   for (const item of pending) {
     if (!isOnline) break;
-    if (inProgress.has(item.id)) continue; // double-check before each upload
+    if (inProgress.has(item.id)) continue;
     inProgress.add(item.id);
     try {
-      await uploadViaFunction(item.imageData, item.filename, item.unit);
+      await uploadViaFunction(item.imageData, item.filename, item.unit, item.folderPath, item.liaison);
       await dbDelete(item.id);
       inProgress.delete(item.id);
       uploaded++;
       markUploaded(item.id, item.filename);
-      const remaining = pending.length - uploaded;
-      if (remaining > 0) showTicker('Uploading photos', `${remaining} remaining`);
+      const rem = pending.length - uploaded;
+      if (rem > 0) showTicker('Uploading photos', `${rem} remaining`);
     } catch(e) {
-      inProgress.delete(item.id); // release lock on failure so it can retry
+      inProgress.delete(item.id);
     }
   }
   hideTicker();
@@ -450,20 +625,14 @@ async function drainQueue() {
 function markUploaded(queueId, filename) {
   const item = sessionLog.find(l => l.id === queueId || l.filename === filename);
   if (item) { item.status = 'uploaded'; renderLog(); }
-  // Update confirm screen if still showing this item
   if (currentConfirmFilename === filename) {
     const s = document.getElementById('confirmStatus');
     if (s) { s.textContent = '✓ Uploaded to Drive'; s.className = 'confirm-status uploaded'; }
   }
 }
 
-// ── tryBgUpload — safe wrapper ─────────────────────────────────
-function tryBgUpload(source) {
-  if (!isOnline || isFlushing) return;
-  drainQueue();
-}
+function tryBgUpload() { if (!isOnline || isFlushing) return; drainQueue(); }
 
-// ── MANUAL FLUSH ───────────────────────────────────────────────
 async function flushQueue() {
   if (isFlushing) return;
   isFlushing = true;
@@ -474,141 +643,128 @@ async function flushQueue() {
   btn.disabled = false; btn.textContent = 'Upload now';
 }
 
-// ── AGGRESSIVE RETRY TIMER — every 5 seconds ──────────────────
 function startBgTimer() {
   if (bgTimer) clearInterval(bgTimer);
   bgTimer = setInterval(async () => {
     if (!db) return;
     const items = await dbGetAll();
     if (!items.length) return;
-    // Probe connectivity, then drain
     await checkConnectivity();
     if (isOnline && !isFlushing) drainQueue();
   }, 5000);
 }
 
-// ── TICKER ─────────────────────────────────────────────────────
+// ── TICKER + BANNER ──────────────────────────────────────────
 function showTicker(text, count) {
   document.getElementById('tickerText').textContent = text;
   document.getElementById('tickerCount').textContent = count || '';
   document.getElementById('uploadTicker').classList.add('show');
 }
-function hideTicker() {
-  document.getElementById('uploadTicker').classList.remove('show');
-}
+function hideTicker() { document.getElementById('uploadTicker').classList.remove('show'); }
 
-// ── BANNER ─────────────────────────────────────────────────────
 async function updateBannerUI() {
   if (!db) return;
   const items = await dbGetAll();
   const banner = document.getElementById('queueBanner');
   if (items.length > 0) {
     banner.classList.add('show');
-    document.getElementById('bannerText').textContent =
-      `${items.length} photo${items.length>1?'s':''} pending`;
-    document.getElementById('bannerSub').textContent =
-      isOnline ? 'Uploading automatically…' : 'Will upload when signal returns';
+    document.getElementById('bannerText').textContent = `${items.length} photo${items.length>1?'s':''} pending`;
+    document.getElementById('bannerSub').textContent = isOnline ? 'Uploading automatically…' : 'Will upload when signal returns';
     document.getElementById('flushBtn').style.display = isOnline ? '' : 'none';
   } else {
     banner.classList.remove('show');
   }
 }
 
-// ── RESET ──────────────────────────────────────────────────────
+// ── RESET ────────────────────────────────────────────────────
 function resetFlow() {
-  ['step1','step2','step3'].forEach(id => {
-    const el = document.getElementById(id);
-    el.style.display = ''; el.classList.remove('active','done');
-  });
-  document.getElementById('step1').classList.add('active');
+  // Hide confirm screen
   document.getElementById('confirmScreen').classList.remove('show');
   currentConfirmFilename = null;
-  unit = ''; photoBlob = null; photoURL = null;
-  document.getElementById('unitInput').value = '';
+
+  // Restore all steps to visible — use empty string to revert to CSS default
+  ['step1','step2','step3'].forEach(id => {
+    const el = document.getElementById(id);
+    el.style.display = '';
+    el.classList.remove('active','done');
+  });
+  document.getElementById('step1').classList.add('active');
+
+  // Reset state
+  unit=''; isCart=false; photoBlob=null; photoURL=null;
+  document.getElementById('unitInput').value='';
+  document.getElementById('unitInput').disabled=false;
+  document.getElementById('unitInput').placeholder='3402';
+  document.getElementById('cartBtn').classList.remove('active');
   document.getElementById('filenamePreview').classList.remove('show');
-  document.getElementById('unitHint').textContent = 'Enter the 3–4 digit unit number';
+  document.getElementById('unitHint').textContent='Enter 3–4 digit unit or tap Cart for pre-departure photo';
+
+  // Reset photo zone
   const zone = document.getElementById('photoZone');
-  zone.innerHTML = `<div class="photo-zone-icon">📷</div><div class="photo-zone-text">Tap to open camera</div><div class="photo-zone-sub">Photo taken inside the unit</div><div class="photo-zone-overlay"><span class="retake-btn">📷 Retake</span></div>`;
+  zone.innerHTML='<div class="photo-zone-icon">📷</div><div class="photo-zone-text">Tap to open camera</div><div class="photo-zone-sub">Back camera · package at door</div><div class="photo-zone-overlay"><span class="retake-btn">📷 Retake</span></div>';
   zone.classList.remove('has-photo');
   zone.onclick = () => triggerCamera();
-  document.getElementById('fileInput').value = '';
-  document.getElementById('saveBtn').disabled = true;
-  document.getElementById('mainView').scrollTo({ top:0, behavior:'smooth' });
+  document.getElementById('fileInput').value='';
+  document.getElementById('saveBtn').disabled=true;
+  updateSaveBtn();
+
+  // Force scroll reset — small delay ensures DOM has updated
+  const main = document.getElementById('mainView');
+  main.style.overflowY = 'auto';
+  main.style.webkitOverflowScrolling = 'touch';
+  setTimeout(() => { main.scrollTop = 0; }, 50);
 }
 
-// ── SESSION LOG ────────────────────────────────────────────────
+// ── SESSION LOG ──────────────────────────────────────────────
 function renderLog() {
   const list  = document.getElementById('logList');
   const empty = document.getElementById('logEmpty');
   document.getElementById('logCount').textContent = `${sessionLog.length} delivered`;
   if (!sessionLog.length) { empty.style.display=''; list.innerHTML=''; list.appendChild(empty); return; }
-  empty.style.display = 'none';
+  empty.style.display='none';
   list.innerHTML = sessionLog.map((item,i) => `
     <div class="log-item${i===0?' just-added':''}">
       ${item.thumbURL
         ? `<img class="log-thumb" src="${item.thumbURL}" alt="">`
-        : '<div style="width:36px;height:36px;border-radius:7px;background:var(--surface2);flex-shrink:0"></div>'}
+        : '<div style="width:34px;height:34px;border-radius:6px;background:var(--surface2);flex-shrink:0"></div>'}
       <div style="min-width:0;flex:1">
-        <div class="log-unit">Unit ${item.unitNum}</div>
+        <div class="log-unit">${item.unitNum==='CART'?'🛒 Cart':('Unit '+item.unitNum)}</div>
         <div class="log-file">${item.filename}</div>
+        <div class="log-meta">
+          <span class="log-liaison">${item.liaison||'—'}</span>
+          ${item.window ? `<span class="window-badge ${item.window.cls}" style="font-size:8px;padding:1px 6px">${item.window.code}</span>` : ''}
+        </div>
       </div>
       <div class="log-badge ${item.status==='uploaded'?'badge-uploaded':'badge-uploading'}">
-        ${item.status==='uploaded'?'✓ Drive':'⏳ Uploading'}
+        ${item.status==='uploaded'?'✓ Drive':'⏳ Queue'}
       </div>
     </div>`).join('');
 }
 
-// ── UTILS ──────────────────────────────────────────────────────
-const delay = ms => new Promise(r => setTimeout(r, ms));
-
-// Compress photo before storing — prevents Safari memory crash on large iPhone photos
-function compressPhoto(blob, maxWidth=1200, quality=0.75) {
-  return new Promise((res, rej) => {
-    const img = new Image();
-    const url = URL.createObjectURL(blob);
-    img.onload = () => {
-      URL.revokeObjectURL(url);
-      // Calculate new dimensions
-      let w = img.width, h = img.height;
-      if (w > maxWidth) { h = Math.round(h * maxWidth / w); w = maxWidth; }
-      const canvas = document.createElement('canvas');
-      canvas.width = w; canvas.height = h;
-      const ctx = canvas.getContext('2d');
-      ctx.drawImage(img, 0, 0, w, h);
-      canvas.toBlob(b => {
-        if (!b) rej(new Error('Compression failed'));
-        else res(b);
-      }, 'image/jpeg', quality);
-    };
-    img.onerror = rej;
-    img.src = url;
-  });
-}
-
+// ── UTILS ────────────────────────────────────────────────────
 const blobToBase64 = blob => new Promise((res,rej) => {
-  const r = new FileReader(); r.onload=()=>res(r.result); r.onerror=rej; r.readAsDataURL(blob);
+  const r=new FileReader(); r.onload=()=>res(r.result); r.onerror=rej; r.readAsDataURL(blob);
 });
 function debounce(fn, ms) {
-  let t; return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), ms); };
+  let t; return (...args) => { clearTimeout(t); t=setTimeout(()=>fn(...args),ms); };
 }
 
-// ── SERVICE WORKER — enables offline app loading ──────────────
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js')
-      .then(() => console.log('SW registered'))
-      .catch(e => console.log('SW error:', e));
-  });
-}
-
-// ── INIT ───────────────────────────────────────────────────────
+// ── INIT ─────────────────────────────────────────────────────
 (async () => {
   await openDB();
   isOnline = navigator.onLine;
+
+  // Restore liaison from localStorage
+  if (liaison) {
+    document.getElementById('liaisonSelect').value = liaison;
+  }
+
   updateConnUI();
+  updateWindowBadge();
   updateBannerUI();
+  updateSaveBtn();
   startBgTimer();
-  // Probe real connectivity and drain any leftover queue
+
   await checkConnectivity();
   if (isOnline) drainQueue();
 })();
