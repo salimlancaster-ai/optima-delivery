@@ -368,7 +368,9 @@ function updateSaveBtn() {
 async function doSave() {
   const filename = buildFilename(unit);
   const capUnit  = unit, capBlob = photoBlob, capURL = photoURL;
-  const b64 = await blobToBase64(capBlob);
+  // Compress photo first — reduces 4-8MB iPhone photo to ~150KB, prevents Safari crash
+  // compressPhoto returns base64 directly via canvas — no separate blobToBase64 needed
+  const b64 = await compressPhoto(capBlob);
 
   // Save to device queue immediately
   const queueId = await dbAdd({
@@ -557,6 +559,31 @@ function renderLog() {
 
 // ── UTILS ──────────────────────────────────────────────────────
 const delay = ms => new Promise(r => setTimeout(r, ms));
+
+// Compress photo before storing — prevents Safari memory crash on large iPhone photos
+function compressPhoto(blob, maxWidth=1200, quality=0.75) {
+  return new Promise((res, rej) => {
+    const img = new Image();
+    const url = URL.createObjectURL(blob);
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      // Calculate new dimensions
+      let w = img.width, h = img.height;
+      if (w > maxWidth) { h = Math.round(h * maxWidth / w); w = maxWidth; }
+      const canvas = document.createElement('canvas');
+      canvas.width = w; canvas.height = h;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, w, h);
+      canvas.toBlob(b => {
+        if (!b) rej(new Error('Compression failed'));
+        else res(b);
+      }, 'image/jpeg', quality);
+    };
+    img.onerror = rej;
+    img.src = url;
+  });
+}
+
 const blobToBase64 = blob => new Promise((res,rej) => {
   const r = new FileReader(); r.onload=()=>res(r.result); r.onerror=rej; r.readAsDataURL(blob);
 });
