@@ -243,6 +243,7 @@ let db = null;
 let bgTimer = null;
 let isFlushing = false;
 let currentConfirmFilename = null;
+const inProgress = new Set(); // persists for lifetime of page — prevents duplicate uploads
 
 // ── INDEXEDDB ──────────────────────────────────────────────────
 function openDB() {
@@ -369,31 +370,62 @@ function updateSaveBtn() {
 async function doSave() {
   const filename = buildFilename(unit);
   const capUnit  = unit, capBlob = photoBlob, capURL = photoURL;
-  // Compress photo first — reduces 4-8MB iPhone photo to ~150KB, prevents Safari crash
-  // compressPhoto returns base64 directly via canvas — no separate blobToBase64 needed
-  const b64 = await compressPhoto(capBlob);
 
-  // Save to device queue immediately
-  const queueId = await dbAdd({
-    filename, unit: capUnit, imageData: b64,
-    thumbURL: capURL, savedAt: new Date().toISOString()
-  });
+  // Disable button immediately to prevent double-tap
+  document.getElementById('saveBtn').disabled = true;
 
-  // Log as uploading
-  sessionLog.unshift({ id: queueId, unitNum: capUnit, filename, thumbURL: capURL, status: 'uploading' });
-  renderLog();
-
-  // Show confirm immediately
+  // Show confirm screen FIRST — before any processing
+  // This guarantees zero UI freeze regardless of photo size
   currentConfirmFilename = filename;
   ['step1','step2','step3'].forEach(id => document.getElementById(id).style.display = 'none');
   document.getElementById('confirmScreen').classList.add('show');
   document.getElementById('confirmFilename').textContent = filename;
-  document.getElementById('confirmStatus').textContent = '⏳ Uploading in background';
+  document.getElementById('confirmStatus').textContent = '⏳ Saving photo…';
   document.getElementById('confirmStatus').className = 'confirm-status uploading';
-  updateBannerUI();
 
-  // Fire background upload — completely non-blocking
-  bgUploadOne(queueId, b64, filename, capUnit);
+  // Add to log immediately with placeholder
+  const tempId = Date.now();
+  sessionLog.unshift({ id: tempId, unitNum: capUnit, filename, thumbURL: capURL, status: 'uploading' });
+  renderLog();
+
+  // Compress and save in background — after UI has already updated
+  setTimeout(async () => {
+    try {
+      // Compress with timeout safety net — if it takes >8s, use raw blob
+      let b64;
+      try {
+        b64 = await Promise.race([
+          compressPhoto(capBlob),
+          new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 8000))
+        ]);
+      } catch(e) {
+        // Compression timed out or failed — convert raw blob directly
+        console.log('Compression fallback:', e.message);
+        b64 = await blobToBase64(capBlob);
+      }
+
+      // Save to IndexedDB queue
+      const queueId = await dbAdd({
+        filename, unit: capUnit, imageData: b64,
+        thumbURL: capURL, savedAt: new Date().toISOString()
+      });
+
+      // Update log item with real ID
+      const logItem = sessionLog.find(l => l.id === tempId);
+      if (logItem) logItem.id = queueId;
+
+      document.getElementById('confirmStatus').textContent = '⏳ Uploading in background';
+      updateBannerUI();
+
+      // Fire background upload
+      bgUploadOne(queueId, b64, filename, capUnit);
+
+    } catch(err) {
+      console.log('Save error:', err.message);
+      document.getElementById('confirmStatus').textContent = '⚠️ Save failed — retake photo';
+      document.getElementById('confirmStatus').className = 'confirm-status uploading';
+    }
+  }, 50); // 50ms delay lets the UI render first
 }
 
 // ── BACKGROUND UPLOAD — single item, non-blocking ──────────────
@@ -416,8 +448,6 @@ async function bgUploadOne(queueId, imageData, filename, unitNum) {
 }
 
 // ── BACKGROUND UPLOAD — full queue drain with lock ────────────
-const inProgress = new Set(); // track IDs currently uploading
-
 async function drainQueue() {
   if (!isOnline || !db) return;
   const items = await dbGetAll();
@@ -588,6 +618,11 @@ function compressPhoto(blob, maxWidth=1200, quality=0.75) {
 const blobToBase64 = blob => new Promise((res,rej) => {
   const r = new FileReader(); r.onload=()=>res(r.result); r.onerror=rej; r.readAsDataURL(blob);
 });
+// Raw base64 fallback for when compression fails
+const blobToBase64 = blob => new Promise((res,rej) => {
+  const r = new FileReader(); r.onload=()=>res(r.result); r.onerror=rej; r.readAsDataURL(blob);
+});
+
 function debounce(fn, ms) {
   let t; return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), ms); };
 }
