@@ -19,8 +19,8 @@
   --radius:18px;--radius-sm:11px;
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-html,body{height:100%;overflow:hidden}
-body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);display:flex;flex-direction:column;height:100dvh}
+html{height:100%}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);display:flex;flex-direction:column;min-height:100dvh;overflow-y:auto;-webkit-overflow-scrolling:touch;}
 
 .header{padding:14px 18px 12px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);flex-shrink:0}
 .logo{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;letter-spacing:1.5px;color:var(--gold);text-transform:uppercase}
@@ -51,7 +51,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);dis
 .ticker-text{font-size:10px;color:rgba(61,214,140,0.7);font-weight:500;flex:1}
 .ticker-count{font-size:10px;color:var(--muted)}
 
-.main{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:14px}
+.main{flex:1;padding:16px;display:flex;flex-direction:column;gap:14px;overflow:visible;}
 
 .step{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;transition:border-color .25s}
 .step.active{border-color:rgba(201,168,76,0.35)}
