@@ -260,10 +260,11 @@ const dbDelete = id   => new Promise((res,rej) => { const r=db.transaction('queu
 
 // ── CONNECTIVITY — react to every possible signal change ───────
 function updateConnUI() {
+  isOnline = navigator.onLine;
   const pill  = document.getElementById('connPill');
   const label = document.getElementById('connLabel');
   pill.className = isOnline ? 'conn-pill online' : 'conn-pill offline';
-  label.textContent = isOnline ? 'Connected' : 'Offline';
+  label.textContent = isOnline ? 'Connected' : 'Offline — saving locally';
   updateBannerUI();
 }
 
@@ -286,18 +287,15 @@ window.addEventListener('focus', () => {
 });
 // Touch — any interaction might mean they just walked into range
 document.addEventListener('touchstart', debounce(() => {
-  if (!isOnline) checkConnectivity().then(() => { if (isOnline) tryBgUpload('touch'); });
+  checkConnectivity();
+  if (isOnline) tryBgUpload('touch');
 }, 3000), { passive: true });
 
-// Active connectivity probe
-async function checkConnectivity() {
-  try {
-    // Fetch a tiny cacheable resource to confirm real connectivity
-    const r = await fetch('/manifest.json', { cache: 'no-store' });
-    if (r.ok) { isOnline = true; updateConnUI(); }
-  } catch(e) {
-    isOnline = false; updateConnUI();
-  }
+// Simple connectivity check — navigator.onLine is reliable on iOS Safari
+function checkConnectivity() {
+  isOnline = navigator.onLine;
+  updateConnUI();
+  return Promise.resolve();
 }
 
 // ── FILENAME ───────────────────────────────────────────────────
@@ -513,7 +511,7 @@ function startBgTimer() {
     const items = await dbGetAll();
     if (!items.length) return;
     // Probe connectivity, then drain
-    await checkConnectivity();
+    checkConnectivity();
     if (isOnline && !isFlushing) drainQueue();
   }, 5000);
 }
@@ -644,8 +642,8 @@ if ('serviceWorker' in navigator) {
   updateConnUI();
   updateBannerUI();
   startBgTimer();
-  // Probe real connectivity and drain any leftover queue
-  await checkConnectivity();
+  // Check connectivity and drain any leftover queue
+  checkConnectivity();
   if (isOnline) drainQueue();
 })();
 </script>
