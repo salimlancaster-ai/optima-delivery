@@ -626,26 +626,23 @@ function debounce(fn, ms) {
   let t; return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), ms); };
 }
 
-// ── SERVICE WORKER — enables offline app loading ──────────────
+// ── SERVICE WORKER — unregister any old SW that may serve stale cache ──
 if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js')
-      .then(() => console.log('SW registered'))
-      .catch(e => console.log('SW error:', e));
+  navigator.serviceWorker.getRegistrations().then(regs => {
+    regs.forEach(reg => reg.unregister());
   });
 }
 
 // ── INIT ───────────────────────────────────────────────────────
-(async () => {
+document.addEventListener('DOMContentLoaded', async () => {
   await openDB();
   isOnline = navigator.onLine;
   updateConnUI();
   updateBannerUI();
   startBgTimer();
-  // Check connectivity and drain any leftover queue
   checkConnectivity();
   if (isOnline) drainQueue();
-})();
+});
 </script>
 </body>
 </html>
