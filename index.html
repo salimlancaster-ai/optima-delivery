@@ -289,13 +289,14 @@ document.addEventListener('touchstart', debounce(() => {
   if (!isOnline) checkConnectivity().then(() => { if (isOnline) tryBgUpload('touch'); });
 }, 3000), { passive: true });
 
-// Active connectivity probe — don't trust navigator.onLine alone
+// Active connectivity probe
 async function checkConnectivity() {
   try {
-    const r = await fetch('/.netlify/functions/ping', { method:'HEAD', cache:'no-store' });
-    if (r.ok || r.status === 405) { isOnline = true; updateConnUI(); }
+    // Fetch a tiny cacheable resource to confirm real connectivity
+    const r = await fetch('/manifest.json', { cache: 'no-store' });
+    if (r.ok) { isOnline = true; updateConnUI(); }
   } catch(e) {
-    // Still offline
+    isOnline = false; updateConnUI();
   }
 }
 
