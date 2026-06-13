@@ -134,7 +134,7 @@ input[type=text]:focus{border-color:var(--gold)}
   <div class="header-right">
     <div class="conn-pill" id="connPill">
       <div class="conn-dot"></div>
-      <span id="connLabel">Loading…</span>
+      <span id="connLabel"></span>
     </div>
   </div>
 </div>
@@ -633,23 +633,16 @@ if ('serviceWorker' in navigator) {
   });
 }
 
-// ── INIT — runs immediately, no waiting for DOMContentLoaded ──
-(async () => {
+// ── INIT ──────────────────────────────────────────────────────
+window.addEventListener('load', async () => {
   await openDB();
-  // Update conn pill immediately on load
   isOnline = navigator.onLine;
-  const pill = document.getElementById('connPill');
-  const label = document.getElementById('connLabel');
-  if (pill && label) {
-    pill.className = isOnline ? 'conn-pill online' : 'conn-pill offline';
-    label.textContent = isOnline ? 'Connected' : 'Offline — saving locally';
-  }
   updateConnUI();
   updateBannerUI();
   startBgTimer();
   checkConnectivity();
   if (isOnline) drainQueue();
-})();
+});
 </script>
 </body>
 </html>
