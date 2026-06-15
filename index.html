@@ -76,7 +76,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .fname{font-family:monospace;font-size:12px;color:var(--gold2);word-break:break-all}
 
 /* PHOTO ZONE */
-.pzone{width:100%;min-height:190px;background:var(--surface2);border:2px dashed rgba(201,168,76,.25);border-radius:var(--radius-sm);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;position:relative;overflow:hidden;cursor:pointer}
+.pzone{width:100%;min-height:190px;background:var(--surface2);border:2px dashed rgba(201,168,76,.25);border-radius:var(--radius-sm);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;position:relative;overflow:hidden}
 .pzone img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .pzone-ovl{position:absolute;inset:0;background:linear-gradient(to top,rgba(15,25,35,.9) 0%,transparent 50%);display:flex;align-items:flex-end;padding:14px;opacity:0;transition:opacity .2s}
 .pzone.has-photo .pzone-ovl{opacity:1}
@@ -177,14 +177,14 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
     <div class="card-body">
       <div class="pzone" id="pzone">
         <div class="pzone-icon">📷</div>
-        <div class="pzone-text">Tap to open camera</div>
+        <div class="pzone-text">Use buttons below to take photo</div>
         <div class="pzone-sub">Photo inside the unit</div>
         <div class="pzone-ovl"><span class="retake">📷 Retake</span></div>
       </div>
       <input type="file" id="fileInput" accept="image/*" capture="environment">
       <div class="pbtns">
-        <button class="gbtn" id="btnCam">📷 Camera</button>
-        <button class="gbtn" id="btnGal">🖼 Gallery</button>
+        <button class="gbtn" id="btnCam">📷 Take Photo</button>
+        <button class="gbtn" id="btnGal">🖼 Choose from Library</button>
       </div>
     </div>
   </div>
@@ -411,7 +411,7 @@ function flash(id) {
 function setupStep2() {
   document.getElementById('btnCam').addEventListener('click', openCam);
   document.getElementById('btnGal').addEventListener('click', openGal);
-  document.getElementById('pzone').addEventListener('click', openCam);
+  // pzone is display only — use buttons below
   document.getElementById('fileInput').addEventListener('change', function(e) {
     var file = e.target.files[0];
     if (!file) return;
@@ -420,7 +420,7 @@ function setupStep2() {
     var zone = document.getElementById('pzone');
     zone.innerHTML = '<img src="' + blobURL + '" alt=""><div class="pzone-ovl"><span class="retake">📷 Retake</span></div>';
     zone.className = 'pzone has-photo';
-    zone.onclick = openCam;
+    // no pzone click
     document.getElementById('c2').className = 'card done active';
     document.getElementById('c3').className = 'card active';
     updateSave();
