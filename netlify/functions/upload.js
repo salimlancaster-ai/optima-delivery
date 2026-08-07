@@ -10,8 +10,28 @@ exports.handler = async (event) => {
   try {
     const { filename, unit, imageData } = JSON.parse(event.body);
 
-    // Service account auth — never expires, no token refresh needed
-    const credentials = JSON.parse(process.env.GOOGLE_SERVICE_KEY);
+    // Diagnostic — log all available env var keys so we can see what Netlify is passing
+    const envKeys = Object.keys(process.env).filter(k =>
+      k.includes('GOOGLE') || k.includes('google') || k.includes('SERVICE')
+    );
+    console.log('Available env keys:', JSON.stringify(envKeys));
+
+    // Try multiple possible variable names
+    const rawKey = process.env.GOOGLE_SERVICE_KEY
+      || process.env.google_service_key
+      || process.env.GOOGLE_SERVICE_ACCOUNT_KEY
+      || process.env.SERVICE_KEY;
+
+    console.log('Key found:', !!rawKey, '| Length:', rawKey ? rawKey.length : 0);
+
+    if (!rawKey) {
+      return {
+        statusCode: 500,
+        body: JSON.stringify({ success: false, error: 'GOOGLE_SERVICE_KEY env var not found. Available keys: ' + JSON.stringify(envKeys) }),
+      };
+    }
+
+    const credentials = JSON.parse(rawKey);
     const auth = new google.auth.GoogleAuth({
       credentials,
       scopes: ['https://www.googleapis.com/auth/drive'],
@@ -19,7 +39,6 @@ exports.handler = async (event) => {
 
     const drive = google.drive({ version: 'v3', auth });
 
-    // Folder structure: Root / YYYY-MM / YYYY-MM-DD / Unit NNN
     const now   = new Date();
     const month = now.toISOString().slice(0, 7);
     const date  = now.toISOString().slice(0, 10);
@@ -28,7 +47,6 @@ exports.handler = async (event) => {
     const dateFolderId  = await getOrCreateFolder(drive, date, monthFolderId);
     const unitFolderId  = await getOrCreateFolder(drive, `Unit ${unit}`, dateFolderId);
 
-    // Upload photo
     const base64Data = imageData.replace(/^data:image\/\w+;base64,/, '');
     const buffer     = Buffer.from(base64Data, 'base64');
     const { Readable } = require('stream');
@@ -40,7 +58,7 @@ exports.handler = async (event) => {
       fields: 'id,name',
     });
 
-    console.log('SUCCESS:', uploaded.data.name, '| ID:', uploaded.data.id);
+    console.log('SUCCESS:', uploaded.data.name);
 
     return {
       statusCode: 200,
