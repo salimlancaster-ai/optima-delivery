@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Delivery Confirmation — Luxer One</title>
+  <style>
+    body, table, td, a { -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
+    table, td { mso-table-lspace: 0pt; mso-table-rspace: 0pt; }
+    img { -ms-interpolation-mode: bicubic; border: 0; height: auto; line-height: 100%; outline: none; text-decoration: none; }
+    body { margin: 0 !important; padding: 0 !important; background-color: #F4F4F4; }
+    @media only screen and (max-width: 620px) {
+      .email-container { width: 100% !important; border-radius: 0 !important; }
+      .content-pad { padding: 24px 20px !important; }
+      .detail-cell { display: block !important; width: 100% !important; padding: 12px 16px !important; border-bottom: 1px solid #E8E8E8 !important; border-right: none !important; }
+      .detail-cell:last-child { border-bottom: none !important; }
+      .footer-pad { padding: 20px !important; }
+    }
+  </style>
+</head>
+<body style="margin:0;padding:0;background-color:#F4F4F4;">
+
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#F4F4F4;">
+  <tr>
+    <td align="center" style="padding:32px 16px;">
+
+      <table role="presentation" class="email-container" width="600" cellpadding="0" cellspacing="0" border="0"
+        style="background-color:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.10);max-width:600px;width:100%;">
+
+        <!-- ══ TOP BAR ══════════════════════════════════════════════ -->
+        <tr>
+          <td style="height:5px;background-color:#F5C800;font-size:0;line-height:0;">&nbsp;</td>
+        </tr>
+
+        <!-- ══ HEADER ══════════════════════════════════════════════ -->
+        <tr>
+          <td style="background-color:#111111;padding:28px 32px;">
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+              <tr>
+                <td style="vertical-align:middle;">
+                  <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+                    <tr>
+                      <td style="vertical-align:middle;">
+                        <div style="display:inline-block;background-color:#F5C800;width:38px;height:38px;border-radius:7px;text-align:center;line-height:38px;font-family:Arial,sans-serif;font-size:20px;font-weight:900;color:#111111;">L</div>
+                      </td>
+                      <td style="padding-left:12px;vertical-align:middle;">
+                        <div style="font-family:Arial,sans-serif;font-size:22px;font-weight:900;color:#ffffff;letter-spacing:2px;">LUXER ONE</div>
+                        <div style="font-family:Arial,sans-serif;font-size:10px;color:rgba(255,255,255,0.4);letter-spacing:2px;text-transform:uppercase;margin-top:2px;">Package Management</div>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+                <td style="vertical-align:middle;text-align:right;">
+                  <div style="display:inline-block;background-color:#F5C800;border-radius:20px;padding:6px 16px;">
+                    <div style="font-family:Arial,sans-serif;font-size:10px;font-weight:800;color:#111111;letter-spacing:1.5px;text-transform:uppercase;">In-Home Delivery</div>
+                  </div>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+
+        <!-- ══ HERO BANNER ══════════════════════════════════════════ -->
+        <tr>
+          <td style="background-color:#F5C800;padding:22px 32px;">
+            <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+              <tr>
+                <td style="vertical-align:middle;padding-right:16px;">
+                  <div style="width:46px;height:46px;background-color:#111111;border-radius:50%;text-align:center;line-height:46px;font-size:22px;color:#F5C800;">✓</div>
+                </td>
+                <td style="vertical-align:middle;">
+                  <div style="font-family:Arial,sans-serif;font-size:20px;font-weight:900;color:#111111;line-height:1.2;">Package Delivered</div>
+                  <div style="font-family:Arial,sans-serif;font-size:12px;font-weight:600;color:rgba(17,17,17,0.6);margin-top:4px;">Successfully placed inside your home</div>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+
+        <!-- ══ GREETING ═════════════════════════════════════════════ -->
+        <tr>
+          <td class="content-pad" style="padding:32px 32px 20px;background-color:#ffffff;">
+            <p style="margin:0 0 14px;font-family:Arial,sans-serif;font-size:15px;color:#111111;line-height:1.7;">
+              Hi <strong style="color:#111111;">{{resident_name}}</strong>,
+            </p>
+            <p style="margin:0;font-family:Arial,sans-serif;font-size:15px;color:#555555;line-height:1.8;">
+              Your in-home delivery has been successfully completed and placed inside your apartment by our concierge team. A photo confirmation is included below for your records.
+            </p>
+          </td>
+        </tr>
+
+        <!-- ══ DELIVERY DETAILS ══════════════════════════════════════ -->
+        <tr>
+          <td style="padding:0 32px 24px;background-color:#ffffff;">
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"
+              style="background-color:#ffffff;border-radius:8px;overflow:hidden;border:1.5px solid #E8E8E8;">
+              <tr>
+                <td colspan="3" style="padding:10px 16px;background-color:#111111;">
+                  <div style="font-family:Arial,sans-serif;font-size:10px;font-weight:800;color:#F5C800;letter-spacing:2px;text-transform:uppercase;">Delivery Details</div>
+                </td>
+              </tr>
+              <tr>
+                <td class="detail-cell" style="padding:16px;border-right:1.5px solid #E8E8E8;vertical-align:top;width:33%;">
+                  <div style="font-family:Arial,sans-serif;font-size:9px;font-weight:700;color:#F5C800;letter-spacing:2px;text-transform:uppercase;margin-bottom:6px;">Unit</div>
+                  <div style="font-family:Arial,sans-serif;font-size:24px;font-weight:900;color:#111111;">{{unit_number}}</div>
+                </td>
+                <td class="detail-cell" style="padding:16px;border-right:1.5px solid #E8E8E8;vertical-align:top;width:33%;">
+                  <div style="font-family:Arial,sans-serif;font-size:9px;font-weight:700;color:#F5C800;letter-spacing:2px;text-transform:uppercase;margin-bottom:6px;">Delivered</div>
+                  <div style="font-family:Arial,sans-serif;font-size:14px;font-weight:700;color:#111111;">{{delivery_date}}</div>
+                  <div style="font-family:Arial,sans-serif;font-size:12px;color:#888888;margin-top:2px;">{{delivery_time}} CT</div>
+                </td>
+                <td class="detail-cell" style="padding:16px;vertical-align:top;width:33%;">
+                  <div style="font-family:Arial,sans-serif;font-size:9px;font-weight:700;color:#F5C800;letter-spacing:2px;text-transform:uppercase;margin-bottom:6px;">Reference</div>
+                  <div style="font-family:monospace;font-size:11px;color:#888888;word-break:break-all;">{{filename}}</div>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+
+        <!-- ══ PHOTO ════════════════════════════════════════════════ -->
+        <tr>
+          <td style="padding:0 32px 28px;background-color:#ffffff;">
+            <div style="font-family:Arial,sans-serif;font-size:9px;font-weight:700;color:#888888;letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;padding-bottom:8px;border-bottom:1.5px solid #E8E8E8;">
+              Delivery Photo
+            </div>
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+              <tr>
+                <td style="border-radius:8px;overflow:hidden;border:1.5px solid #E8E8E8;line-height:0;">
+                  <img src="{{photo_url}}" alt="Delivery photo — Unit {{unit_number}}"
+                    width="536" style="width:100%;max-width:536px;height:auto;display:block;border-radius:6px;" />
+                </td>
+              </tr>
+            </table>
+            <p style="margin:10px 0 0;font-family:Arial,sans-serif;font-size:11px;color:#aaaaaa;text-align:center;font-style:italic;">
+              Photo taken by concierge staff at time of delivery
+            </p>
+          </td>
+        </tr>
+
+        <!-- ══ NOTICE BOX ═══════════════════════════════════════════ -->
+        <tr>
+          <td style="padding:0 32px 32px;background-color:#ffffff;">
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"
+              style="background-color:#FFFBEA;border-radius:8px;border-left:4px solid #F5C800;">
+              <tr>
+                <td style="padding:14px 18px;">
+                  <div style="font-family:Arial,sans-serif;font-size:13px;color:#333333;line-height:1.7;">
+                    <strong style="color:#111111;">Questions about your delivery?</strong><br>
+                    Please contact the package liaison team or visit the concierge desk. Reference your unit number and delivery date when reaching out.
+                  </div>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+
+        <!-- ══ DIVIDER ═══════════════════════════════════════════════ -->
+        <tr>
+          <td style="padding:0 32px;background-color:#ffffff;">
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+              <tr><td style="border-top:1.5px solid #E8E8E8;font-size:0;line-height:0;">&nbsp;</td></tr>
+            </table>
+          </td>
+        </tr>
+
+        <!-- ══ FOOTER ════════════════════════════════════════════════ -->
+        <tr>
+          <td class="footer-pad" style="padding:24px 32px;background-color:#ffffff;">
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+              <tr>
+                <td style="vertical-align:top;">
+                  <div style="font-family:Arial,sans-serif;font-size:13px;font-weight:700;color:#111111;margin-bottom:5px;">Optima Signature Management</div>
+                  <div style="font-family:Arial,sans-serif;font-size:12px;color:#888888;line-height:1.8;">
+                    220 E. Illinois St., Chicago, IL 60611<br>
+                    {{management_phone}}&nbsp;&nbsp;·&nbsp;&nbsp;
+                    <a href="mailto:{{management_email}}" style="color:#111111;text-decoration:none;font-weight:600;">{{management_email}}</a>
+                  </div>
+                </td>
+                <td style="vertical-align:top;text-align:right;padding-left:16px;white-space:nowrap;">
+                  <div style="font-family:Arial,sans-serif;font-size:9px;color:#aaaaaa;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;">Powered by</div>
+                  <div style="display:inline-block;background-color:#111111;border-radius:5px;padding:5px 12px;">
+                    <div style="font-family:Arial,sans-serif;font-size:13px;font-weight:900;color:#F5C800;letter-spacing:1.5px;">LUXER ONE</div>
+                  </div>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+
+        <!-- ══ BOTTOM BAR ════════════════════════════════════════════ -->
+        <tr>
+          <td style="background-color:#F5C800;padding:12px 32px;">
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+              <tr>
+                <td style="font-family:Arial,sans-serif;font-size:10px;color:rgba(17,17,17,0.55);line-height:1.5;">
+                  This is an automated delivery confirmation. Please do not reply to this email.
+                </td>
+                <td style="text-align:right;white-space:nowrap;">
+                  <div style="display:inline-block;width:7px;height:7px;background-color:#111111;border-radius:50%;margin-left:4px;vertical-align:middle;opacity:0.8;"></div>
+                  <div style="display:inline-block;width:7px;height:7px;background-color:#111111;border-radius:50%;margin-left:4px;vertical-align:middle;opacity:0.3;"></div>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+
+      </table>
+
+      <!-- OUTER FOOTER -->
+      <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="max-width:600px;width:100%;">
+        <tr>
+          <td style="padding:16px 0;text-align:center;font-family:Arial,sans-serif;font-size:11px;color:#999999;line-height:1.8;">
+            © 2026 Optima Signature · 220 E. Illinois St., Chicago, IL 60611<br>
+            <a href="{{unsubscribe_url}}" style="color:#999999;text-decoration:underline;">Unsubscribe</a>
+            &nbsp;·&nbsp;
+            <a href="{{privacy_url}}" style="color:#999999;text-decoration:underline;">Privacy Policy</a>
+          </td>
+        </tr>
+      </table>
+
+    </td>
+  </tr>
+</table>
+
+</body>
+</html>
