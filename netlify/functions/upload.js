@@ -150,18 +150,23 @@ exports.handler = async (event) => {
       fields: 'id,name',
     });
 
-    // Make publicly readable for email embedding
-    await drive.permissions.create({
-      fileId: uploaded.data.id,
-      requestBody: { role: 'reader', type: 'anyone' },
-    });
-
+    // Share file publicly so it can be embedded in email
+    try {
+      await drive.permissions.create({
+        fileId: uploaded.data.id,
+        requestBody: { role: 'reader', type: 'anyone' },
+        supportsAllDrives: true,
+      });
+      console.log('File shared publicly');
+    } catch(permErr) {
+      console.log('Permission warning (non-fatal):', permErr.message);
+    }
     const photoUrl = `https://drive.google.com/uc?export=view&id=${uploaded.data.id}`;
     console.log('SUCCESS:', uploaded.data.name);
 
     // Look up residents from Sheet
     const recipients = await getResidentEmails(auth, unit);
-    console.log('Recipients for unit', unit, ':', recipients.length);
+    console.log('Recipients for unit', unit, ':', recipients.length, JSON.stringify(recipients.map(r=>r.email)));
 
     // Schedule email with 2-minute delay
     if (recipients.length > 0 && deliveryId) {
