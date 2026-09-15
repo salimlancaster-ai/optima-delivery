@@ -1,11 +1,10 @@
 const { google } = require('googleapis');
 const sgMail = require('@sendgrid/mail');
-const fs = require('fs');
-const path = require('path');
 
-const ROOT_FOLDER_ID = '1UOHnLXymieQLCPd9KqNsjNwjyZHA99xU';
-const SHEET_ID       = '1wtmUPwkRexC4hraveWVtC1me9RKIs1-NeAzHx3yMS2s';
-const CLIENT_ID      = '450769207094-j35fdsvrv947qjtfndpcmrvfk1qbtse2.apps.googleusercontent.com';
+const ROOT_FOLDER_ID  = '1UOHnLXymieQLCPd9KqNsjNwjyZHA99xU';
+const SHEET_ID        = '1wtmUPwkRexC4hraveWVtC1me9RKIs1-NeAzHx3yMS2s';
+const CLIENT_ID       = '450769207094-j35fdsvrv947qjtfndpcmrvfk1qbtse2.apps.googleusercontent.com';
+const SG_TEMPLATE_ID  = 'd-2fce9a145aa04f2aa2996627000d9d8f';
 
 let cachedToken = null;
 let tokenExpiry = null;
@@ -50,26 +49,6 @@ async function getResidentEmails(auth, unit) {
     .filter(r => r.email && r.email.includes('@'));
 }
 
-function buildEmailHtml(recipient, unit, filename, photoUrl, deliveryDate, deliveryTime) {
-  // Load the template file bundled with the function
-  let html = fs.readFileSync(path.join(__dirname, 'email_template.html'), 'utf8');
-
-  // Replace all template variables
-  html = html
-    .replace(/\{\{resident_name\}\}/g,    recipient.name)
-    .replace(/\{\{unit_number\}\}/g,      unit)
-    .replace(/\{\{delivery_date\}\}/g,    deliveryDate)
-    .replace(/\{\{delivery_time\}\}/g,    deliveryTime)
-    .replace(/\{\{filename\}\}/g,         filename)
-    .replace(/\{\{photo_url\}\}/g,        photoUrl)
-    .replace(/\{\{management_phone\}\}/g, '(312) 555-0100')
-    .replace(/\{\{management_email\}\}/g, 'management@optimasignature.com')
-    .replace(/\{\{unsubscribe_url\}\}/g,  '#')
-    .replace(/\{\{privacy_url\}\}/g,      '#');
-
-  return html;
-}
-
 async function sendConfirmationEmail(recipients, unit, filename, photoUrl) {
   sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
@@ -82,13 +61,23 @@ async function sendConfirmationEmail(recipients, unit, filename, photoUrl) {
   });
 
   for (const recipient of recipients) {
-    const html = buildEmailHtml(recipient, unit, filename, photoUrl, deliveryDate, deliveryTime);
-
     await sgMail.send({
-      to:      recipient.email,
-      from:    { email: 'optimasignature.delivery@gmail.com', name: 'Optima Signature Deliveries' },
-      subject: `Package Delivered — Unit ${unit}`,
-      html,
+      to:         recipient.email,
+      from:       { email: 'optimasignature.delivery@gmail.com', name: 'Optima Signature Deliveries' },
+      subject:    `Package Delivered — Unit ${unit}`,
+      templateId: SG_TEMPLATE_ID,
+      dynamicTemplateData: {
+        resident_name:     recipient.name,
+        unit_number:       unit,
+        delivery_date:     deliveryDate,
+        delivery_time:     deliveryTime,
+        filename:          filename,
+        photo_url:         photoUrl,
+        management_phone:  '(312) 555-0100',
+        management_email:  'management@optimasignature.com',
+        unsubscribe_url:   '#',
+        privacy_url:       '#',
+      },
     });
     console.log('Email sent to:', recipient.email);
   }
@@ -170,11 +159,11 @@ exports.handler = async (event) => {
     const photoUrl = `https://drive.google.com/uc?export=view&id=${uploaded.data.id}`;
     console.log('SUCCESS:', uploaded.data.name);
 
-    // Look up residents
+    // Look up residents from Sheet
     const recipients = await getResidentEmails(auth, unit);
     console.log('Recipients for unit', unit, ':', recipients.length);
 
-    // Schedule email — 2-minute delay with cancel window
+    // Schedule email with 2-minute delay
     if (recipients.length > 0 && deliveryId) {
       const timer = setTimeout(async () => {
         try {
