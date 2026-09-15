@@ -1,5 +1,7 @@
 const { google } = require('googleapis');
 const sgMail = require('@sendgrid/mail');
+const fs = require('fs');
+const path = require('path');
 
 const ROOT_FOLDER_ID = '1UOHnLXymieQLCPd9KqNsjNwjyZHA99xU';
 const SHEET_ID       = '1wtmUPwkRexC4hraveWVtC1me9RKIs1-NeAzHx3yMS2s';
@@ -40,66 +42,51 @@ async function getResidentEmails(auth, unit) {
   const rows = res.data.values || [];
   return rows
     .slice(1)
-    .filter(row => row[0] && row[0].toString().trim() === unit.toString().trim() && row[4] && row[4].toString().trim().toLowerCase() === 'yes')
+    .filter(row =>
+      row[0] && row[0].toString().trim() === unit.toString().trim() &&
+      row[4] && row[4].toString().trim().toLowerCase() === 'yes'
+    )
     .map(row => ({ name: row[2] || 'Resident', email: row[3] }))
     .filter(r => r.email && r.email.includes('@'));
 }
 
+function buildEmailHtml(recipient, unit, filename, photoUrl, deliveryDate, deliveryTime) {
+  // Load the template file bundled with the function
+  let html = fs.readFileSync(path.join(__dirname, 'email_template.html'), 'utf8');
+
+  // Replace all template variables
+  html = html
+    .replace(/\{\{resident_name\}\}/g,    recipient.name)
+    .replace(/\{\{unit_number\}\}/g,      unit)
+    .replace(/\{\{delivery_date\}\}/g,    deliveryDate)
+    .replace(/\{\{delivery_time\}\}/g,    deliveryTime)
+    .replace(/\{\{filename\}\}/g,         filename)
+    .replace(/\{\{photo_url\}\}/g,        photoUrl)
+    .replace(/\{\{management_phone\}\}/g, '(312) 555-0100')
+    .replace(/\{\{management_email\}\}/g, 'management@optimasignature.com')
+    .replace(/\{\{unsubscribe_url\}\}/g,  '#')
+    .replace(/\{\{privacy_url\}\}/g,      '#');
+
+  return html;
+}
+
 async function sendConfirmationEmail(recipients, unit, filename, photoUrl) {
   sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+
   const now = new Date();
-  const timeStr = now.toLocaleString('en-US', { timeZone: 'America/Chicago', hour: '2-digit', minute: '2-digit', month: 'short', day: 'numeric' });
+  const deliveryDate = now.toLocaleDateString('en-US', {
+    timeZone: 'America/Chicago', month: 'short', day: 'numeric', year: 'numeric'
+  });
+  const deliveryTime = now.toLocaleTimeString('en-US', {
+    timeZone: 'America/Chicago', hour: '2-digit', minute: '2-digit'
+  });
 
   for (const recipient of recipients) {
-    const html = `<!DOCTYPE html>
-<html>
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
-<body style="margin:0;padding:0;background:#f5f5f5;font-family:Arial,sans-serif">
-  <table width="100%" cellpadding="0" cellspacing="0" style="background:#f5f5f5;padding:32px 0">
-    <tr><td align="center">
-      <table width="560" cellpadding="0" cellspacing="0" style="background:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.08)">
-        <tr><td style="background:#1B2A4A;padding:28px 32px;text-align:center">
-          <div style="font-family:Georgia,serif;font-size:22px;font-weight:bold;color:#C9A84C;letter-spacing:1px">OPTIMA SIGNATURE</div>
-          <div style="font-size:12px;color:rgba(255,255,255,0.6);margin-top:4px;letter-spacing:2px;text-transform:uppercase">Package Delivery Confirmation</div>
-        </td></tr>
-        <tr><td style="padding:32px">
-          <p style="margin:0 0 8px;font-size:16px;color:#1B2A4A">Hello ${recipient.name},</p>
-          <p style="margin:0 0 24px;font-size:14px;color:#555;line-height:1.6">Your package has been delivered to your unit. Please see the delivery photo below for confirmation.</p>
-          <table width="100%" cellpadding="0" cellspacing="0" style="background:#f8f8f6;border-radius:8px;margin-bottom:24px">
-            <tr>
-              <td style="padding:16px 20px;border-bottom:1px solid #eee">
-                <span style="font-size:11px;font-weight:bold;color:#888;text-transform:uppercase;letter-spacing:1px">Unit</span><br>
-                <span style="font-size:16px;font-weight:bold;color:#1B2A4A">${unit}</span>
-              </td>
-              <td style="padding:16px 20px;border-bottom:1px solid #eee">
-                <span style="font-size:11px;font-weight:bold;color:#888;text-transform:uppercase;letter-spacing:1px">Delivered</span><br>
-                <span style="font-size:14px;color:#333">${timeStr} CT</span>
-              </td>
-            </tr>
-            <tr>
-              <td colspan="2" style="padding:16px 20px">
-                <span style="font-size:11px;font-weight:bold;color:#888;text-transform:uppercase;letter-spacing:1px">Reference</span><br>
-                <span style="font-size:12px;color:#555;font-family:monospace">${filename}</span>
-              </td>
-            </tr>
-          </table>
-          <div style="text-align:center;margin-bottom:24px">
-            <img src="${photoUrl}" alt="Delivery Photo" style="max-width:100%;border-radius:8px;border:1px solid #eee">
-          </div>
-          <p style="margin:0;font-size:13px;color:#888;line-height:1.6">If you have any questions about your delivery, please contact the concierge desk.</p>
-        </td></tr>
-        <tr><td style="background:#1B2A4A;padding:20px 32px;text-align:center">
-          <div style="font-size:11px;color:rgba(255,255,255,0.5)">Optima Signature · Package Services · Chicago, IL</div>
-        </td></tr>
-      </table>
-    </td></tr>
-  </table>
-</body>
-</html>`;
+    const html = buildEmailHtml(recipient, unit, filename, photoUrl, deliveryDate, deliveryTime);
 
     await sgMail.send({
-      to: recipient.email,
-      from: { email: 'optimasignature.delivery@gmail.com', name: 'Optima Signature Deliveries' },
+      to:      recipient.email,
+      from:    { email: 'optimasignature.delivery@gmail.com', name: 'Optima Signature Deliveries' },
       subject: `Package Delivered — Unit ${unit}`,
       html,
     });
@@ -146,8 +133,7 @@ exports.handler = async (event) => {
     const dateFolderId  = await getOrCreateFolder(drive, date, monthFolderId);
     const unitFolderId  = await getOrCreateFolder(drive, `Unit ${unit}`, dateFolderId);
 
-    // ── DUPLICATE PREVENTION ──────────────────────────────────────
-    // Check if this exact filename already exists before uploading
+    // Duplicate prevention
     const existingCheck = await drive.files.list({
       q: `name='${filename}' and '${unitFolderId}' in parents and trashed=false`,
       fields: 'files(id,name)',
@@ -155,10 +141,12 @@ exports.handler = async (event) => {
     if (existingCheck.data.files.length > 0) {
       const existingId = existingCheck.data.files[0].id;
       console.log('Duplicate prevented:', filename);
-      const photoUrl = `https://drive.google.com/uc?export=view&id=${existingId}`;
       return {
         statusCode: 200,
-        body: JSON.stringify({ success: true, fileId: existingId, filename, photoUrl, duplicate: true }),
+        body: JSON.stringify({
+          success: true, fileId: existingId, filename, duplicate: true,
+          photoUrl: `https://drive.google.com/uc?export=view&id=${existingId}`,
+        }),
       };
     }
 
@@ -166,28 +154,27 @@ exports.handler = async (event) => {
     const base64Data = imageData.replace(/^data:image\/\w+;base64,/, '');
     const buffer     = Buffer.from(base64Data, 'base64');
     const { Readable } = require('stream');
-    const stream     = Readable.from(buffer);
 
     const uploaded = await drive.files.create({
       requestBody: { name: filename, parents: [unitFolderId] },
-      media: { mimeType: 'image/jpeg', body: stream },
+      media: { mimeType: 'image/jpeg', body: Readable.from(buffer) },
       fields: 'id,name',
     });
 
-    // Make file publicly readable for email embedding
+    // Make publicly readable for email embedding
     await drive.permissions.create({
       fileId: uploaded.data.id,
       requestBody: { role: 'reader', type: 'anyone' },
     });
 
     const photoUrl = `https://drive.google.com/uc?export=view&id=${uploaded.data.id}`;
-    console.log('SUCCESS:', uploaded.data.name, '| ID:', uploaded.data.id);
+    console.log('SUCCESS:', uploaded.data.name);
 
-    // Look up resident emails from Google Sheet
+    // Look up residents
     const recipients = await getResidentEmails(auth, unit);
     console.log('Recipients for unit', unit, ':', recipients.length);
 
-    // Schedule confirmation email with 2-minute delay
+    // Schedule email — 2-minute delay with cancel window
     if (recipients.length > 0 && deliveryId) {
       const timer = setTimeout(async () => {
         try {
@@ -198,7 +185,7 @@ exports.handler = async (event) => {
         }
       }, 2 * 60 * 1000);
       pendingEmails[deliveryId] = timer;
-      console.log('Email scheduled in 2 min for:', deliveryId);
+      console.log('Email scheduled in 2 min for deliveryId:', deliveryId);
     }
 
     return {
