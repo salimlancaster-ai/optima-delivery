@@ -174,7 +174,7 @@ exports.handler = async (event) => {
         await sendConfirmationEmail(recipients, unit, filename, photoUrl);
         console.log('Email sent successfully for unit:', unit);
       } catch(e) {
-        console.log('Email error (non-fatal):', e.message);
+        console.log('Email error FULL:', JSON.stringify(e.response ? e.response.body : e.message));
       }
     }
 
