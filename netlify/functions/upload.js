@@ -168,18 +168,14 @@ exports.handler = async (event) => {
     const recipients = await getResidentEmails(auth, unit);
     console.log('Recipients for unit', unit, ':', recipients.length, JSON.stringify(recipients.map(r=>r.email)));
 
-    // Schedule email with 2-minute delay
-    if (recipients.length > 0 && deliveryId) {
-      const timer = setTimeout(async () => {
-        try {
-          await sendConfirmationEmail(recipients, unit, filename, photoUrl);
-          delete pendingEmails[deliveryId];
-        } catch(e) {
-          console.log('Email error:', e.message);
-        }
-      }, 2 * 60 * 1000);
-      pendingEmails[deliveryId] = timer;
-      console.log('Email scheduled in 2 min for deliveryId:', deliveryId);
+    // Send confirmation email immediately
+    if (recipients.length > 0) {
+      try {
+        await sendConfirmationEmail(recipients, unit, filename, photoUrl);
+        console.log('Email sent successfully for unit:', unit);
+      } catch(e) {
+        console.log('Email error (non-fatal):', e.message);
+      }
     }
 
     return {
