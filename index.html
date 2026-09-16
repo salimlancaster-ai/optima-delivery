@@ -313,7 +313,7 @@ function upload(data, filename, unit, done) {
   fetch('/.netlify/functions/upload', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ filename: filename, unit: unit, imageData: data })
+    body: JSON.stringify({ filename: filename, unit: unit, imageData: data, deliveryId: filename })
   }).then(function(r) { return r.json(); })
     .then(function(d) { done(d.success ? null : new Error(d.error)); })
     .catch(function(e) { done(e); });
