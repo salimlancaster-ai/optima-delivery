@@ -215,7 +215,7 @@ exports.handler = async (event) => {
     } catch(permErr) {
       console.log('Permission warning (non-fatal):', permErr.message);
     }
-    const photoUrl = `https://drive.google.com/uc?export=view&id=${uploaded.data.id}`;
+    const photoUrl = `https://lh3.googleusercontent.com/d/${uploaded.data.id}`;
     console.log('SUCCESS:', uploaded.data.name);
 
     // Look up residents from Sheet
