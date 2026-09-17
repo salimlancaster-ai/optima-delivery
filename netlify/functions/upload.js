@@ -4,7 +4,6 @@ const sgMail = require('@sendgrid/mail');
 const ROOT_FOLDER_ID  = '1UOHnLXymieQLCPd9KqNsjNwjyZHA99xU';
 const SHEET_ID        = '1wtmUPwkRexC4hraveWVtC1me9RKIs1-NeAzHx3yMS2s';
 const CLIENT_ID       = '450769207094-j35fdsvrv947qjtfndpcmrvfk1qbtse2.apps.googleusercontent.com';
-const SG_TEMPLATE_ID  = 'd-2fce9a145aa04f2aa2996627000d9d8f';
 
 let cachedToken = null;
 let tokenExpiry = null;
@@ -49,6 +48,72 @@ async function getResidentEmails(auth, unit) {
     .filter(r => r.email && r.email.includes('@'));
 }
 
+function buildEmailHtml(recipient, unit, filename, photoUrl, deliveryDate, deliveryTime) {
+  return `<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
+<body style="margin:0;padding:0;background-color:#F4F4F4;font-family:Arial,sans-serif">
+<table width="100%" cellpadding="0" cellspacing="0" style="background:#F4F4F4;padding:32px 16px">
+  <tr><td align="center">
+    <table width="600" cellpadding="0" cellspacing="0" style="background:#ffffff;border-radius:12px;overflow:hidden;max-width:600px;width:100%;box-shadow:0 4px 24px rgba(0,0,0,0.10)">
+      <tr><td style="height:5px;background:#F5C800;font-size:0">&nbsp;</td></tr>
+      <tr><td style="background:#111111;padding:28px 32px">
+        <table width="100%" cellpadding="0" cellspacing="0">
+          <tr>
+            <td><div style="display:inline-block;background:#F5C800;width:38px;height:38px;border-radius:7px;text-align:center;line-height:38px;font-size:20px;font-weight:900;color:#111111;vertical-align:middle">L</div>
+            <span style="font-size:22px;font-weight:900;color:#ffffff;letter-spacing:2px;padding-left:12px;vertical-align:middle">LUXER ONE</span></td>
+            <td align="right"><div style="display:inline-block;background:#F5C800;border-radius:20px;padding:6px 16px;font-size:10px;font-weight:800;color:#111111;letter-spacing:1.5px">IN-HOME DELIVERY</div></td>
+          </tr>
+        </table>
+      </td></tr>
+      <tr><td style="background:#F5C800;padding:22px 32px">
+        <table cellpadding="0" cellspacing="0"><tr>
+          <td style="padding-right:16px"><div style="width:46px;height:46px;background:#111111;border-radius:50%;text-align:center;line-height:46px;font-size:22px;color:#F5C800">&#10003;</div></td>
+          <td><div style="font-size:20px;font-weight:900;color:#111111">Package Delivered</div>
+          <div style="font-size:12px;font-weight:600;color:rgba(17,17,17,0.6);margin-top:4px">Successfully placed inside your home</div></td>
+        </tr></table>
+      </td></tr>
+      <tr><td style="padding:32px 32px 20px">
+        <p style="margin:0 0 14px;font-size:15px;color:#111111">Hi <strong>${recipient.name}</strong>,</p>
+        <p style="margin:0;font-size:15px;color:#555555;line-height:1.8">Your in-home delivery has been successfully completed and placed inside your apartment by our concierge team. A photo confirmation is included below for your records.</p>
+      </td></tr>
+      <tr><td style="padding:0 32px 24px">
+        <table width="100%" cellpadding="0" cellspacing="0" style="border-radius:8px;overflow:hidden;border:1.5px solid #E8E8E8">
+          <tr><td colspan="3" style="padding:10px 16px;background:#111111"><div style="font-size:10px;font-weight:800;color:#F5C800;letter-spacing:2px;text-transform:uppercase">Delivery Details</div></td></tr>
+          <tr>
+            <td style="padding:16px;border-right:1.5px solid #E8E8E8;width:33%"><div style="font-size:9px;font-weight:700;color:#F5C800;letter-spacing:2px;text-transform:uppercase;margin-bottom:6px">Unit</div><div style="font-size:24px;font-weight:900;color:#111111">${unit}</div></td>
+            <td style="padding:16px;border-right:1.5px solid #E8E8E8;width:33%"><div style="font-size:9px;font-weight:700;color:#F5C800;letter-spacing:2px;text-transform:uppercase;margin-bottom:6px">Delivered</div><div style="font-size:14px;font-weight:700;color:#111111">${deliveryDate}</div><div style="font-size:12px;color:#888888;margin-top:2px">${deliveryTime} CT</div></td>
+            <td style="padding:16px;width:33%"><div style="font-size:9px;font-weight:700;color:#F5C800;letter-spacing:2px;text-transform:uppercase;margin-bottom:6px">Reference</div><div style="font-family:monospace;font-size:11px;color:#888888;word-break:break-all">${filename}</div></td>
+          </tr>
+        </table>
+      </td></tr>
+      <tr><td style="padding:0 32px 28px">
+        <div style="font-size:9px;font-weight:700;color:#888888;letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;padding-bottom:8px;border-bottom:1.5px solid #E8E8E8">Delivery Photo</div>
+        <img src="${photoUrl}" alt="Delivery Photo" width="536" style="width:100%;max-width:536px;height:auto;display:block;border-radius:8px;border:1.5px solid #E8E8E8">
+        <p style="margin:10px 0 0;font-size:11px;color:#aaaaaa;text-align:center;font-style:italic">Photo taken by concierge staff at time of delivery</p>
+      </td></tr>
+      <tr><td style="padding:0 32px 32px">
+        <table width="100%" cellpadding="0" cellspacing="0" style="background:#FFFBEA;border-radius:8px;border-left:4px solid #F5C800">
+          <tr><td style="padding:14px 18px;font-size:13px;color:#333333;line-height:1.7"><strong style="color:#111111">Questions about your delivery?</strong><br>Please contact the package liaison team or visit the concierge desk.</td></tr>
+        </table>
+      </td></tr>
+      <tr><td style="padding:0 32px 24px">
+        <table width="100%" cellpadding="0" cellspacing="0">
+          <tr>
+            <td><div style="font-size:13px;font-weight:700;color:#111111;margin-bottom:5px">Optima Signature Management</div>
+            <div style="font-size:12px;color:#888888;line-height:1.8">220 E. Illinois St., Chicago, IL 60611</div></td>
+            <td align="right"><div style="display:inline-block;background:#111111;border-radius:5px;padding:5px 12px;font-size:13px;font-weight:900;color:#F5C800;letter-spacing:1.5px">LUXER ONE</div></td>
+          </tr>
+        </table>
+      </td></tr>
+      <tr><td style="background:#F5C800;padding:12px 32px;font-size:10px;color:rgba(17,17,17,0.55)">This is an automated delivery confirmation. Please do not reply to this email.</td></tr>
+    </table>
+  </td></tr>
+</table>
+</body>
+</html>`;
+}
+
 async function sendConfirmationEmail(recipients, unit, filename, photoUrl) {
   sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
@@ -61,23 +126,12 @@ async function sendConfirmationEmail(recipients, unit, filename, photoUrl) {
   });
 
   for (const recipient of recipients) {
+    const html = buildEmailHtml(recipient, unit, filename, photoUrl, deliveryDate, deliveryTime);
     await sgMail.send({
-      to:         recipient.email,
-      from:       { email: 'optimasignature.delivery@gmail.com', name: 'Optima Signature Deliveries' },
-      subject:    `Package Delivered — Unit ${unit}`,
-      templateId: SG_TEMPLATE_ID,
-      dynamicTemplateData: {
-        resident_name:     recipient.name,
-        unit_number:       unit,
-        delivery_date:     deliveryDate,
-        delivery_time:     deliveryTime,
-        filename:          filename,
-        photo_url:         photoUrl,
-        management_phone:  '(312) 555-0100',
-        management_email:  'management@optimasignature.com',
-        unsubscribe_url:   '#',
-        privacy_url:       '#',
-      },
+      to:      recipient.email,
+      from:    { email: 'optimasignature.delivery@gmail.com', name: 'Optima Signature Deliveries' },
+      subject: 'Package Delivered — Unit ' + unit,
+      html:    html,
     });
     console.log('Email sent to:', recipient.email);
   }
