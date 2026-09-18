@@ -33,8 +33,9 @@ exports.handler = async (event) => {
     const auth  = await getAuthClient();
     const drive = google.drive({ version: 'v3', auth });
 
-    // Today's date folder
-    const today = new Date().toISOString().slice(0, 10);
+    // Read date from query param or default to today
+    const params = new URLSearchParams(event.queryStringParameters || {});
+    const today = params.get('date') || new Date().toISOString().slice(0, 10);
     const month = today.slice(0, 7);
 
     // Find month folder
@@ -93,7 +94,7 @@ exports.handler = async (event) => {
           unit,
           filename: file.name,
           fileId: file.id,
-          photoUrl: `https://drive.google.com/uc?export=view&id=${file.id}`,
+          photoUrl: `https://drive.google.com/thumbnail?id=${file.id}&sz=w800`,
           time: timeStr,
           name: residentMap[unit] || null,
         });
