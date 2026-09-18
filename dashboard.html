@@ -6,223 +6,330 @@
 <title>Optima Signature · Liaison Dashboard</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:Arial,sans-serif;background:#F5F5F3;color:#1B2A4A;min-height:100vh}
-.hdr{background:#1B2A4A;padding:18px 28px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(0,0,0,0.2)}
-.hdr-left{display:flex;flex-direction:column}
-.hdr-title{font-size:18px;font-weight:bold;color:#C9A84C;letter-spacing:1px}
-.hdr-sub{font-size:11px;color:rgba(255,255,255,0.5);margin-top:2px;letter-spacing:1px;text-transform:uppercase}
-.hdr-right{display:flex;align-items:center;gap:12px}
-.date-pill{background:rgba(201,168,76,0.15);border:1px solid rgba(201,168,76,0.3);border-radius:20px;padding:6px 14px;font-size:13px;color:#C9A84C;font-weight:600}
-.refresh-btn{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:20px;padding:6px 14px;font-size:12px;color:rgba(255,255,255,0.7);cursor:pointer;font-family:Arial,sans-serif}
+body{font-family:Arial,sans-serif;background:#F0EFE9;color:#1B2A4A;min-height:100vh}
+
+/* HEADER */
+.hdr{background:#1B2A4A;padding:16px 28px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(0,0,0,0.2)}
+.hdr-title{font-size:17px;font-weight:900;color:#C9A84C;letter-spacing:1px;text-transform:uppercase}
+.hdr-sub{font-size:10px;color:rgba(255,255,255,0.4);margin-top:2px;letter-spacing:1.5px;text-transform:uppercase}
+.hdr-right{display:flex;align-items:center;gap:10px}
+.refresh-btn{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:20px;padding:7px 16px;font-size:12px;color:rgba(255,255,255,0.7);cursor:pointer;font-family:Arial,sans-serif;transition:background .2s}
 .refresh-btn:hover{background:rgba(255,255,255,0.15)}
-.stats-bar{display:grid;grid-template-columns:repeat(4,1fr);gap:0;background:#1B2A4A;border-top:1px solid rgba(255,255,255,0.08);padding:0 28px}
-.stat{padding:14px 0;text-align:center}
-.stat-num{font-size:24px;font-weight:bold;color:#C9A84C}
-.stat-label{font-size:10px;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:1px;margin-top:2px}
-.main{padding:24px 28px;max-width:1200px;margin:0 auto}
-.filter-bar{display:flex;align-items:center;gap:12px;margin-bottom:20px;flex-wrap:wrap}
-.filter-label{font-size:12px;font-weight:bold;color:#888;text-transform:uppercase;letter-spacing:1px}
-.filter-btn{padding:7px 16px;border-radius:20px;border:1.5px solid #ddd;background:#fff;font-size:12px;font-weight:600;cursor:pointer;color:#555;transition:all .2s;font-family:Arial,sans-serif}
-.filter-btn.active{background:#1B2A4A;color:#fff;border-color:#1B2A4A}
-.search-box{margin-left:auto;padding:7px 14px;border:1.5px solid #ddd;border-radius:20px;font-size:13px;outline:none;font-family:Arial,sans-serif;width:200px}
+.auto-badge{font-size:10px;color:rgba(255,255,255,0.35);letter-spacing:.5px}
+
+/* STATS */
+.stats-bar{display:grid;grid-template-columns:repeat(4,1fr);background:#111111;border-top:1px solid rgba(255,255,255,0.06)}
+.stat{padding:14px 0;text-align:center;border-right:1px solid rgba(255,255,255,0.06)}
+.stat:last-child{border-right:none}
+.stat-num{font-size:26px;font-weight:900;color:#C9A84C}
+.stat-label{font-size:9px;color:rgba(255,255,255,0.35);text-transform:uppercase;letter-spacing:1.5px;margin-top:3px}
+
+/* CONTROLS */
+.controls{padding:16px 28px;background:#ffffff;border-bottom:1px solid #E8E5DC;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.control-group{display:flex;align-items:center;gap:8px}
+.control-label{font-size:10px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:1px;white-space:nowrap}
+
+/* DATE PICKER */
+.date-input{padding:7px 12px;border:1.5px solid #ddd;border-radius:8px;font-size:13px;font-family:Arial,sans-serif;color:#1B2A4A;outline:none;cursor:pointer;background:#fff}
+.date-input:focus{border-color:#1B2A4A}
+.date-nav{display:flex;gap:4px}
+.date-nav-btn{padding:7px 12px;border:1.5px solid #ddd;border-radius:8px;background:#fff;font-size:12px;cursor:pointer;color:#555;font-family:Arial,sans-serif;transition:all .2s}
+.date-nav-btn:hover{border-color:#1B2A4A;color:#1B2A4A}
+.today-btn{padding:7px 12px;border:1.5px solid #C9A84C;border-radius:8px;background:#fff;font-size:11px;font-weight:700;cursor:pointer;color:#C9A84C;font-family:Arial,sans-serif;transition:all .2s}
+.today-btn:hover{background:#C9A84C;color:#fff}
+
+/* FLOOR FILTERS */
+.floor-filters{display:flex;gap:6px;flex-wrap:wrap}
+.floor-btn{padding:6px 12px;border-radius:20px;border:1.5px solid #ddd;background:#fff;font-size:11px;font-weight:700;cursor:pointer;color:#555;transition:all .2s;font-family:Arial,sans-serif;white-space:nowrap}
+.floor-btn.active{background:#1B2A4A;color:#fff;border-color:#1B2A4A}
+.floor-btn:hover:not(.active){border-color:#1B2A4A;color:#1B2A4A}
+
+/* SEARCH */
+.search-box{padding:7px 14px;border:1.5px solid #ddd;border-radius:20px;font-size:13px;outline:none;font-family:Arial,sans-serif;width:200px;margin-left:auto}
 .search-box:focus{border-color:#1B2A4A}
-.section-title{font-size:13px;font-weight:bold;color:#888;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:12px;padding-bottom:8px;border-bottom:2px solid #C9A84C;display:inline-block}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px;margin-bottom:32px}
-.card{background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.06);border:1px solid #eee;transition:transform .2s,box-shadow .2s}
-.card:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,0.1)}
-.card-photo{width:100%;height:160px;object-fit:cover;background:#f0f0f0;display:block}
-.card-photo-placeholder{width:100%;height:160px;background:#f5f5f5;display:flex;align-items:center;justify-content:center;font-size:36px;color:#ddd}
-.card-body{padding:12px 14px}
-.card-unit{font-size:16px;font-weight:bold;color:#1B2A4A}
-.card-name{font-size:12px;color:#888;margin-top:2px}
-.card-time{font-size:11px;color:#aaa;margin-top:4px}
-.card-filename{font-family:monospace;font-size:10px;color:#bbb;margin-top:4px;word-break:break-all}
-.card-status{display:inline-block;margin-top:8px;padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
-.status-delivered{background:#EAF3DE;color:#27500A}
-.status-pending{background:#FEF3E2;color:#7A4500}
+
+/* MAIN */
+.main{padding:20px 28px;max-width:1400px;margin:0 auto}
+
+/* SECTION */
+.section-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;padding-bottom:8px;border-bottom:2px solid #C9A84C}
+.section-title{font-size:11px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:1.5px}
+.section-count{font-size:11px;color:#C9A84C;font-weight:700}
+.floor-section{margin-bottom:28px}
+
+/* GRID */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px}
+
+/* CARD */
+.card{background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.06);border:1px solid #eee;cursor:pointer;transition:transform .2s,box-shadow .2s}
+.card:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(0,0,0,0.12)}
+.card-photo-wrap{position:relative;width:100%;height:150px;background:#f5f5f5;overflow:hidden}
+.card-photo{width:100%;height:100%;object-fit:cover;display:block}
+.card-photo-placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:32px;color:#ddd;background:#f9f9f9}
+.card-body{padding:11px 13px}
+.card-unit{font-size:15px;font-weight:900;color:#1B2A4A}
+.card-name{font-size:11px;color:#888;margin-top:2px}
+.card-time{font-size:10px;color:#aaa;margin-top:3px}
+.card-file{font-family:monospace;font-size:9px;color:#ccc;margin-top:3px;word-break:break-all}
+.card-badge{display:inline-block;margin-top:7px;padding:3px 9px;border-radius:20px;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;background:#EAF3DE;color:#27500A}
+
+/* STATES */
 .empty{text-align:center;padding:60px 20px;color:#aaa}
 .empty-icon{font-size:48px;margin-bottom:12px}
-.empty-text{font-size:16px;font-weight:600;margin-bottom:6px;color:#888}
-.empty-sub{font-size:13px}
+.empty-text{font-size:16px;font-weight:700;margin-bottom:6px;color:#888}
 .loading{text-align:center;padding:60px;color:#aaa;font-size:15px}
+
 /* MODAL */
-.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:1000;align-items:center;justify-content:center}
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:1000;align-items:center;justify-content:center}
 .modal-bg.show{display:flex}
-.modal{background:#fff;border-radius:16px;overflow:hidden;max-width:600px;width:90%;max-height:90vh;overflow-y:auto}
-.modal-photo{width:100%;max-height:400px;object-fit:contain;background:#000}
-.modal-body{padding:20px}
-.modal-unit{font-size:20px;font-weight:bold;color:#1B2A4A}
-.modal-detail{font-size:13px;color:#666;margin-top:4px}
-.modal-close{position:absolute;top:16px;right:16px;background:rgba(0,0,0,0.5);color:#fff;border:none;border-radius:50%;width:32px;height:32px;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center}
-.modal-wrap{position:relative}
+.modal{background:#fff;border-radius:16px;overflow:hidden;max-width:680px;width:92%;max-height:92vh;overflow-y:auto;position:relative}
+.modal-photo{width:100%;max-height:420px;object-fit:contain;background:#111;display:block}
+.modal-body{padding:20px 24px}
+.modal-unit{font-size:22px;font-weight:900;color:#1B2A4A}
+.modal-detail{font-size:13px;color:#666;margin-top:4px;line-height:1.6}
+.modal-file{font-family:monospace;font-size:11px;color:#aaa;margin-top:4px}
+.modal-close{position:absolute;top:14px;right:14px;background:rgba(0,0,0,0.5);color:#fff;border:none;border-radius:50%;width:32px;height:32px;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:10;line-height:1}
 </style>
 </head>
 <body>
 
 <div class="hdr">
-  <div class="hdr-left">
-    <div class="hdr-title">OPTIMA SIGNATURE</div>
+  <div>
+    <div class="hdr-title">Optima Signature</div>
     <div class="hdr-sub">Liaison Delivery Dashboard</div>
   </div>
   <div class="hdr-right">
-    <div class="date-pill" id="datePill">—</div>
+    <span class="auto-badge" id="autoBadge">Auto-refresh in 60s</span>
     <button class="refresh-btn" onclick="loadDeliveries()">↻ Refresh</button>
   </div>
 </div>
 
 <div class="stats-bar">
-  <div class="stat"><div class="stat-num" id="statTotal">—</div><div class="stat-label">Total Today</div></div>
+  <div class="stat"><div class="stat-num" id="statTotal">—</div><div class="stat-label">Total</div></div>
   <div class="stat"><div class="stat-num" id="statUploaded">—</div><div class="stat-label">Uploaded</div></div>
   <div class="stat"><div class="stat-num" id="statUnits">—</div><div class="stat-label">Units</div></div>
   <div class="stat"><div class="stat-num" id="statFloors">—</div><div class="stat-label">Floors</div></div>
 </div>
 
-<div class="main">
-  <div class="filter-bar">
-    <span class="filter-label">Filter:</span>
-    <button class="filter-btn active" onclick="setFilter('all',this)">All</button>
-    <button class="filter-btn" onclick="setFilter('floor2',this)">Fl 2–10</button>
-    <button class="filter-btn" onclick="setFilter('floor11',this)">Fl 11–25</button>
-    <button class="filter-btn" onclick="setFilter('floor26',this)">Fl 26–50</button>
-    <input type="text" class="search-box" id="searchBox" placeholder="Search unit or name…" oninput="renderCards()">
+<div class="controls">
+  <!-- Date navigation -->
+  <div class="control-group">
+    <div class="control-label">Date</div>
+    <div class="date-nav">
+      <button class="date-nav-btn" onclick="changeDate(-1)">← Prev</button>
+      <button class="today-btn" onclick="goToday()">Today</button>
+      <button class="date-nav-btn" onclick="changeDate(1)">Next →</button>
+    </div>
+    <input type="date" class="date-input" id="dateInput" onchange="onDateChange()">
   </div>
 
+  <!-- Floor filters -->
+  <div class="control-group">
+    <div class="control-label">Floor</div>
+    <div class="floor-filters">
+      <button class="floor-btn active" onclick="setFloor('all',this)">All</button>
+      <button class="floor-btn" onclick="setFloor('2-10',this)">Fl 2–10</button>
+      <button class="floor-btn" onclick="setFloor('11-20',this)">Fl 11–20</button>
+      <button class="floor-btn" onclick="setFloor('21-30',this)">Fl 21–30</button>
+      <button class="floor-btn" onclick="setFloor('31-40',this)">Fl 31–40</button>
+      <button class="floor-btn" onclick="setFloor('41-52',this)">Fl 41–52</button>
+    </div>
+  </div>
+
+  <input type="text" class="search-box" id="searchBox" placeholder="Search unit or name…" oninput="renderCards()">
+</div>
+
+<div class="main">
   <div id="content"><div class="loading">Loading deliveries…</div></div>
 </div>
 
 <!-- MODAL -->
 <div class="modal-bg" id="modalBg" onclick="closeModal(event)">
-  <div class="modal modal-wrap">
-    <button class="modal-close" onclick="closeModal()">✕</button>
+  <div class="modal">
+    <button class="modal-close" onclick="closeModalBtn()">✕</button>
     <img id="modalPhoto" class="modal-photo" src="" alt="Delivery photo">
     <div class="modal-body">
       <div class="modal-unit" id="modalUnit"></div>
       <div class="modal-detail" id="modalDetail"></div>
-      <div class="modal-detail" id="modalFile" style="font-family:monospace;font-size:11px;color:#aaa;margin-top:4px"></div>
+      <div class="modal-file" id="modalFile"></div>
     </div>
   </div>
 </div>
 
 <script>
 var allDeliveries = [];
-var currentFilter = 'all';
-var DRIVE_FOLDER_ID = '1UOHnLXymieQLCPd9KqNsjNwjyZHA99xU';
+var currentFloor = 'all';
+var currentDate = todayStr();
+var refreshTimer = null;
+var countdown = 60;
 
-// Update date pill
-var now = new Date();
-document.getElementById('datePill').textContent = now.toLocaleDateString('en-US',{weekday:'long',month:'short',day:'numeric'});
+function todayStr() {
+  return new Date().toISOString().slice(0,10);
+}
 
-function setFilter(f, btn) {
-  currentFilter = f;
-  document.querySelectorAll('.filter-btn').forEach(function(b){b.classList.remove('active');});
+// Init date input
+document.getElementById('dateInput').value = currentDate;
+
+function onDateChange() {
+  currentDate = document.getElementById('dateInput').value;
+  loadDeliveries();
+}
+
+function changeDate(dir) {
+  var d = new Date(currentDate + 'T12:00:00');
+  d.setDate(d.getDate() + dir);
+  currentDate = d.toISOString().slice(0,10);
+  document.getElementById('dateInput').value = currentDate;
+  loadDeliveries();
+}
+
+function goToday() {
+  currentDate = todayStr();
+  document.getElementById('dateInput').value = currentDate;
+  loadDeliveries();
+}
+
+function setFloor(f, btn) {
+  currentFloor = f;
+  document.querySelectorAll('.floor-btn').forEach(function(b){b.classList.remove('active');});
   btn.classList.add('active');
   renderCards();
 }
 
 function getFloor(unit) {
-  var u = unit.toString();
+  var u = unit.toString().replace(/\D/g,'');
   if (u.length === 3) return parseInt(u[0]);
   if (u.length === 4) return parseInt(u.slice(0,2));
   return 0;
 }
 
-function filterDeliveries(deliveries) {
+function floorInRange(floor) {
+  if (currentFloor === 'all') return true;
+  var parts = currentFloor.split('-');
+  return floor >= parseInt(parts[0]) && floor <= parseInt(parts[1]);
+}
+
+function filterDeliveries() {
   var search = document.getElementById('searchBox').value.toLowerCase();
-  return deliveries.filter(function(d) {
+  return allDeliveries.filter(function(d) {
     var floor = getFloor(d.unit);
-    var matchFilter = true;
-    if (currentFilter === 'floor2') matchFilter = floor >= 2 && floor <= 10;
-    else if (currentFilter === 'floor11') matchFilter = floor >= 11 && floor <= 25;
-    else if (currentFilter === 'floor26') matchFilter = floor >= 26 && floor <= 50;
+    var matchFloor = floorInRange(floor);
     var matchSearch = !search ||
       d.unit.toString().includes(search) ||
       (d.name && d.name.toLowerCase().includes(search));
-    return matchFilter && matchSearch;
+    return matchFloor && matchSearch;
   });
 }
 
 function renderCards() {
-  var filtered = filterDeliveries(allDeliveries);
+  var filtered = filterDeliveries();
   var content = document.getElementById('content');
 
+  var dateLabel = new Date(currentDate + 'T12:00:00').toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'});
+  var isToday = currentDate === todayStr();
+
   if (!filtered.length) {
-    content.innerHTML = '<div class="empty"><div class="empty-icon">📦</div><div class="empty-text">No deliveries found</div><div class="empty-sub">Try a different filter or search term</div></div>';
+    content.innerHTML = '<div class="empty"><div class="empty-icon">📦</div>'
+      + '<div class="empty-text">No deliveries for ' + (isToday ? 'today' : dateLabel) + '</div>'
+      + '<div style="font-size:13px;color:#aaa;margin-top:6px">Try a different date or floor filter</div></div>';
     return;
   }
 
-  // Group by floor
+  // Group by floor descending
   var byFloor = {};
   filtered.forEach(function(d) {
-    var floor = getFloor(d.unit);
-    if (!byFloor[floor]) byFloor[floor] = [];
-    byFloor[floor].push(d);
+    var f = getFloor(d.unit);
+    if (!byFloor[f]) byFloor[f] = [];
+    byFloor[f].push(d);
   });
 
-  var floors = Object.keys(byFloor).sort(function(a,b){return b-a;});
+  var floors = Object.keys(byFloor).map(Number).sort(function(a,b){return b-a;});
   var html = '';
+
+  if (!isToday) {
+    html += '<div style="font-size:12px;color:#888;margin-bottom:16px;padding:8px 12px;background:#fff;border-radius:8px;border-left:3px solid #C9A84C">'
+      + '📅 Showing deliveries for <strong>' + dateLabel + '</strong></div>';
+  }
+
   floors.forEach(function(floor) {
-    html += '<div class="section-title">Floor ' + floor + ' — ' + byFloor[floor].length + ' delivery' + (byFloor[floor].length>1?'s':'') + '</div>';
+    var items = byFloor[floor];
+    html += '<div class="floor-section">';
+    html += '<div class="section-hdr">'
+      + '<div class="section-title">Floor ' + floor + '</div>'
+      + '<div class="section-count">' + items.length + ' delivery' + (items.length>1?'s':'') + '</div>'
+      + '</div>';
     html += '<div class="grid">';
-    byFloor[floor].forEach(function(d, i) {
-      html += '<div class="card" onclick="openModal(\'' + d.photoUrl + '\',\'' + d.unit + '\',\'' + (d.name||'') + '\',\'' + d.time + '\',\'' + d.filename + '\')">';
+    items.forEach(function(d) {
+      var safeUrl = d.photoUrl ? d.photoUrl.replace(/'/g,"\\'") : '';
+      var safeName = (d.name||'').replace(/'/g,"\\'");
+      var safeFile = (d.filename||'').replace(/'/g,"\\'");
+      html += '<div class="card" onclick="openModal(\'' + safeUrl + '\',\'' + d.unit + '\',\'' + safeName + '\',\'' + d.time + '\',\'' + safeFile + '\')">';
+      html += '<div class="card-photo-wrap">';
       if (d.photoUrl) {
-        html += '<img class="card-photo" src="' + d.photoUrl + '" alt="Unit ' + d.unit + '" loading="lazy" onerror="this.style.display=\'none\';this.nextSibling.style.display=\'flex\'">';
-        html += '<div class="card-photo-placeholder" style="display:none">📷</div>';
+        html += '<img class="card-photo" src="' + d.photoUrl + '" alt="Unit ' + d.unit + '" loading="lazy" onerror="this.parentNode.innerHTML=\'<div class=card-photo-placeholder>📷</div>\'">';
       } else {
         html += '<div class="card-photo-placeholder">📷</div>';
       }
-      html += '<div class="card-body">';
+      html += '</div><div class="card-body">';
       html += '<div class="card-unit">Unit ' + d.unit + '</div>';
       if (d.name) html += '<div class="card-name">' + d.name + '</div>';
       html += '<div class="card-time">' + d.time + '</div>';
-      html += '<div class="card-filename">' + d.filename + '</div>';
-      html += '<span class="card-status status-delivered">✓ Delivered</span>';
+      html += '<div class="card-file">' + d.filename + '</div>';
+      html += '<span class="card-badge">✓ Delivered</span>';
       html += '</div></div>';
     });
-    html += '</div>';
+    html += '</div></div>';
   });
 
   content.innerHTML = html;
 }
 
 function updateStats(deliveries) {
-  var units = new Set(deliveries.map(function(d){return d.unit;}));
+  var units  = new Set(deliveries.map(function(d){return d.unit;}));
   var floors = new Set(deliveries.map(function(d){return getFloor(d.unit);}));
-  document.getElementById('statTotal').textContent = deliveries.length;
+  document.getElementById('statTotal').textContent    = deliveries.length;
   document.getElementById('statUploaded').textContent = deliveries.length;
-  document.getElementById('statUnits').textContent = units.size;
-  document.getElementById('statFloors').textContent = floors.size;
+  document.getElementById('statUnits').textContent    = units.size;
+  document.getElementById('statFloors').textContent   = floors.size;
 }
 
 async function loadDeliveries() {
-  document.getElementById('content').innerHTML = '<div class="loading">Loading today\'s deliveries…</div>';
+  document.getElementById('content').innerHTML = '<div class="loading">Loading deliveries…</div>';
+  resetCountdown();
   try {
-    // Load from Drive API via the upload function
-    var res = await fetch('/.netlify/functions/get-deliveries');
+    var res  = await fetch('/.netlify/functions/get-deliveries?date=' + currentDate);
     var data = await res.json();
     allDeliveries = data.deliveries || [];
     updateStats(allDeliveries);
     renderCards();
   } catch(e) {
-    document.getElementById('content').innerHTML = '<div class="empty"><div class="empty-icon">⚠️</div><div class="empty-text">Could not load deliveries</div><div class="empty-sub">' + e.message + '</div></div>';
+    document.getElementById('content').innerHTML =
+      '<div class="empty"><div class="empty-icon">⚠️</div><div class="empty-text">Could not load deliveries</div><div style="font-size:13px;color:#aaa;margin-top:6px">' + e.message + '</div></div>';
   }
 }
 
 function openModal(photoUrl, unit, name, time, filename) {
   document.getElementById('modalPhoto').src = photoUrl || '';
-  document.getElementById('modalUnit').textContent = 'Unit ' + unit;
-  document.getElementById('modalDetail').textContent = (name ? name + ' · ' : '') + time;
-  document.getElementById('modalFile').textContent = filename;
+  document.getElementById('modalUnit').textContent  = 'Unit ' + unit;
+  document.getElementById('modalDetail').textContent = (name ? name + '  ·  ' : '') + time;
+  document.getElementById('modalFile').textContent   = filename;
   document.getElementById('modalBg').classList.add('show');
 }
-function closeModal(e) {
-  if (!e || e.target === document.getElementById('modalBg')) {
-    document.getElementById('modalBg').classList.remove('show');
-  }
+function closeModal(e) { if (e.target === document.getElementById('modalBg')) closeModalBtn(); }
+function closeModalBtn() { document.getElementById('modalBg').classList.remove('show'); }
+
+// Auto-refresh countdown
+function resetCountdown() {
+  countdown = 60;
+  if (refreshTimer) clearInterval(refreshTimer);
+  refreshTimer = setInterval(function() {
+    countdown--;
+    document.getElementById('autoBadge').textContent = 'Auto-refresh in ' + countdown + 's';
+    if (countdown <= 0) { loadDeliveries(); }
+  }, 1000);
 }
 
 loadDeliveries();
-setInterval(loadDeliveries, 60000); // Auto-refresh every minute
 </script>
 </body>
 </html>
