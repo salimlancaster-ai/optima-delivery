@@ -200,7 +200,7 @@ async function sendConfirmationEmail(recipients, unit, filename, photoUrl) {
     const html = buildEmailHtml(recipient, unit, filename, photoUrl, deliveryDate, deliveryTime);
     await sgMail.send({
       to:      recipient.email,
-      from:    { email: 'optimasignature.delivery@gmail.com', name: 'Optima Signature Deliveries' },
+      from:    { email: 'deliveries@optimasignature-delivery.com', name: 'Optima Signature Deliveries' },
       subject: 'Package Delivered — Unit ' + unit,
       html,
     });
