@@ -115,14 +115,36 @@ async function getResidentEmails(auth, unit) {
     range: 'Sheet1!A:F',
   });
   const rows = res.data.values || [];
+  // Return row index (1-based, including header) along with recipient data
   return rows
     .slice(1)
-    .filter(row =>
+    .map((row, i) => ({ row, rowIndex: i + 2 }))
+    .filter(({ row }) =>
       row[0] && row[0].toString().trim() === unit.toString().trim() &&
       row[4] && row[4].toString().trim().toLowerCase() === 'yes'
     )
-    .map(row => ({ name: row[2] || 'Resident', email: row[3] }))
+    .map(({ row, rowIndex }) => ({ name: row[2] || 'Resident', email: row[3], rowIndex }))
     .filter(r => r.email && r.email.includes('@'));
+}
+
+// ── WRITE EMAIL STATUS BACK TO SHEET ──────────────────────────
+async function writeEmailStatus(auth, rowIndex, status) {
+  try {
+    const sheets = google.sheets({ version: 'v4', auth });
+    const timestamp = new Date().toLocaleString('en-US', {
+      timeZone: 'America/Chicago',
+      month: '2-digit', day: '2-digit', year: 'numeric',
+      hour: '2-digit', minute: '2-digit', hour12: true,
+    });
+    await sheets.spreadsheets.values.update({
+      spreadsheetId: SHEET_ID,
+      range: `Sheet1!F${rowIndex}:G${rowIndex}`,
+      valueInputOption: 'RAW',
+      requestBody: { values: [[timestamp, status]] },
+    });
+  } catch (e) {
+    console.log('Sheet write error (non-fatal):', e.message);
+  }
 }
 
 // ── EMAIL TEMPLATE ─────────────────────────────────────────────
@@ -190,7 +212,7 @@ function buildEmailHtml(recipient, unit, filename, photoUrl, deliveryDate, deliv
 }
 
 // ── SEND EMAIL ─────────────────────────────────────────────────
-async function sendConfirmationEmail(recipients, unit, filename, photoUrl) {
+async function sendConfirmationEmail(recipients, unit, filename, photoUrl, auth) {
   sgMail.setApiKey(process.env.SENDGRID_API_KEY);
   const now = new Date();
   const deliveryDate = now.toLocaleDateString('en-US', { timeZone: 'America/Chicago', month: 'short', day: 'numeric', year: 'numeric' });
@@ -198,13 +220,19 @@ async function sendConfirmationEmail(recipients, unit, filename, photoUrl) {
 
   for (const recipient of recipients) {
     const html = buildEmailHtml(recipient, unit, filename, photoUrl, deliveryDate, deliveryTime);
-    await sgMail.send({
-      to:      recipient.email,
-      from:    { email: 'deliveries@optimasignature-delivery.com', name: 'Optima Signature Deliveries' },
-      subject: 'Package Delivered — Unit ' + unit,
-      html,
-    });
-    console.log('Email sent to:', recipient.email);
+    try {
+      await sgMail.send({
+        to:      recipient.email,
+        from:    { email: 'deliveries@optimasignature-delivery.com', name: 'Optima Signature Deliveries' },
+        subject: 'Package Delivered — Unit ' + unit,
+        html,
+      });
+      console.log('Email sent to:', recipient.email);
+      await writeEmailStatus(auth, recipient.rowIndex, 'Delivered');
+    } catch (e) {
+      console.log('Email error for', recipient.email, ':', JSON.stringify(e.response ? e.response.body : e.message));
+      await writeEmailStatus(auth, recipient.rowIndex, 'Error');
+    }
   }
 }
 
@@ -271,12 +299,8 @@ exports.handler = async (event) => {
 
     // Send confirmation email
     if (recipients.length > 0) {
-      try {
-        await sendConfirmationEmail(recipients, unit, filename, photoUrl);
-        console.log('Email sent successfully for unit:', unit);
-      } catch(e) {
-        console.log('Email error:', JSON.stringify(e.response ? e.response.body : e.message));
-      }
+      await sendConfirmationEmail(recipients, unit, filename, photoUrl, auth);
+      console.log('Email processing complete for unit:', unit);
     }
 
     return {
