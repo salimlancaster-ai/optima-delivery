@@ -115,15 +115,15 @@ async function getResidentEmails(auth, unit) {
     range: 'Sheet1!A:F',
   });
   const rows = res.data.values || [];
-  // Return row index (1-based, including header) along with recipient data
+  // Columns: A=Unit(0), B=Floor(1), C=FloorGroup(2), D=ResidentName(3), E=Email(4), F=Active(5)
   return rows
     .slice(1)
     .map((row, i) => ({ row, rowIndex: i + 2 }))
     .filter(({ row }) =>
       row[0] && row[0].toString().trim() === unit.toString().trim() &&
-      row[4] && row[4].toString().trim().toLowerCase() === 'yes'
+      row[5] && row[5].toString().trim().toLowerCase() === 'yes'
     )
-    .map(({ row, rowIndex }) => ({ name: row[2] || 'Resident', email: row[3], rowIndex }))
+    .map(({ row, rowIndex }) => ({ name: row[3] || 'Resident', email: row[4], rowIndex }))
     .filter(r => r.email && r.email.includes('@'));
 }
 
@@ -138,7 +138,7 @@ async function writeEmailStatus(auth, rowIndex, status) {
     });
     await sheets.spreadsheets.values.update({
       spreadsheetId: SHEET_ID,
-      range: `Sheet1!F${rowIndex}:G${rowIndex}`,
+      range: `Sheet1!G${rowIndex}:H${rowIndex}`,
       valueInputOption: 'RAW',
       requestBody: { values: [[timestamp, status]] },
     });
