@@ -167,7 +167,7 @@ function buildEmailHtml(recipient, unit, filename, photoUrl, deliveryDate, deliv
       <tr><td style="background:#F5C800;padding:22px 32px">
         <table cellpadding="0" cellspacing="0"><tr>
           <td style="padding-right:16px"><div style="width:46px;height:46px;background:#111111;border-radius:50%;text-align:center;line-height:46px;font-size:22px;color:#F5C800">&#10003;</div></td>
-          <td><div style="font-size:20px;font-weight:900;color:#111111">Package Delivered</div>
+          <td><div style="font-size:20px;font-weight:900;color:#111111">Delivery Completed</div>
           <div style="font-size:12px;font-weight:600;color:rgba(17,17,17,0.6);margin-top:4px">Successfully placed inside your home</div></td>
         </tr></table>
       </td></tr>
@@ -198,7 +198,7 @@ function buildEmailHtml(recipient, unit, filename, photoUrl, deliveryDate, deliv
       <tr><td style="padding:0 32px 24px">
         <table width="100%" cellpadding="0" cellspacing="0"><tr>
           <td><div style="font-size:13px;font-weight:700;color:#111111;margin-bottom:5px">Optima Signature Management</div>
-          <div style="font-size:12px;color:#888888;line-height:1.8">220 E. Illinois St., Chicago, IL 60611<br>
+          <div style="font-size:12px;color:#888888;line-height:1.8">220 E. Illinois St.<br>Chicago, IL 60611<br>
           <a href="mailto:liaisonos@luxerone.com" style="color:#111111;text-decoration:none;font-weight:600">liaisonos@luxerone.com</a></div></td>
           <td align="right"><div style="display:inline-block;background:#111111;border-radius:5px;padding:5px 12px;font-size:13px;font-weight:900;color:#F5C800;letter-spacing:1.5px">LUXER ONE</div></td>
         </tr></table>
@@ -224,7 +224,7 @@ async function sendConfirmationEmail(recipients, unit, filename, photoUrl, auth)
       await sgMail.send({
         to:      recipient.email,
         from:    { email: 'deliveries@optimasignature-delivery.com', name: 'Optima Signature Deliveries' },
-        subject: 'Package Delivered — Unit ' + unit,
+        subject: 'Delivery Completed — Unit ' + unit,
         html,
       });
       console.log('Email sent to:', recipient.email);
