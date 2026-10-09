@@ -123,10 +123,11 @@ async function getResidentEmails(auth, unit) {
       row[0] && row[0].toString().trim() === unit.toString().trim() &&
       row[5] && row[5].toString().trim().toLowerCase() === 'yes'
     )
-    .flatMap(({ row, rowIndex }) => {
-  const names = (row[3] || '').split(',').map(n => n.trim()).filter(Boolean);
-const displayName = names.length === 1 ? names[0] : `Residents of Unit ${unit}`;
-})
+ .map(({ row, rowIndex }) => ({ 
+  name: (row[3] && row[3].toString().trim()) || `Residents of Unit ${unit}`,
+  email: row[4], 
+  rowIndex 
+}))
 
 }
 
@@ -175,7 +176,7 @@ function buildEmailHtml(recipient, unit, filename, photoUrl, deliveryDate, deliv
         </tr></table>
       </td></tr>
       <tr><td style="padding:32px 32px 20px">
-        <p style="margin:0 0 14px;font-size:15px;color:#111111">Hi <strong>${recipient.name}</strong>,</p>
+        <p style="margin:0 0 14px;font-size:15px;color:#111111">Hi <strong>${recipient.name || 'Resident'}</strong>,</p>
         <p style="margin:0;font-size:15px;color:#555555;line-height:1.8">Your in-home delivery has been successfully completed and placed inside your apartment by our concierge team. A photo confirmation is included below for your records.</p>
       </td></tr>
       <tr><td style="padding:0 32px 24px">
