@@ -115,7 +115,6 @@ async function getResidentEmails(auth, unit) {
     range: 'Sheet1!A:F',
   });
   const rows = res.data.values || [];
-  // Columns: A=Unit(0), B=Floor(1), C=FloorGroup(2), D=ResidentName(3), E=Email(4), F=Active(5)
   return rows
     .slice(1)
     .map((row, i) => ({ row, rowIndex: i + 2 }))
@@ -123,12 +122,11 @@ async function getResidentEmails(auth, unit) {
       row[0] && row[0].toString().trim() === unit.toString().trim() &&
       row[5] && row[5].toString().trim().toLowerCase() === 'yes'
     )
- .map(({ row, rowIndex }) => ({ 
-  name: (row[3] && row[3].toString().trim()) || `Residents of Unit ${unit}`,
-  email: row[4], 
-  rowIndex 
-}))
-
+    .flatMap(({ row, rowIndex }) => {
+      const name = (row[3] && row[3].toString().trim()) || `Residents of Unit ${unit}`;
+      const emails = (row[4] || '').split(',').map(e => e.trim()).filter(e => e.includes('@'));
+      return emails.map(email => ({ name, email, rowIndex }));
+    });
 }
 
 // ── WRITE EMAIL STATUS BACK TO SHEET ──────────────────────────
