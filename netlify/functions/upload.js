@@ -125,6 +125,7 @@ async function getResidentEmails(auth, unit) {
     .flatMap(({ row, rowIndex }) => {
       const rawName = (row[3] && row[3].toString().trim()) || `Residents of Unit ${unit}`;
 const name = rawName.includes(',') ? `Residents of Unit ${unit}` : rawName;
+      const emails = (row[4] || '').split(',').map(e => e.trim()).filter(e => e.includes('@'));
       return emails.map(email => ({ name, email, rowIndex }));
     });
 }
