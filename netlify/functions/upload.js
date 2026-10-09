@@ -123,8 +123,11 @@ async function getResidentEmails(auth, unit) {
       row[0] && row[0].toString().trim() === unit.toString().trim() &&
       row[5] && row[5].toString().trim().toLowerCase() === 'yes'
     )
-    .map(({ row, rowIndex }) => ({ name: row[3] || 'Resident', email: row[4], rowIndex }))
-    .filter(r => r.email && r.email.includes('@'));
+    .flatMap(({ row, rowIndex }) => {
+  const emails = (row[4] || '').split(',').map(e => e.trim()).filter(e => e.includes('@'));
+  return emails.map(email => ({ name: row[3] || 'Resident', email, rowIndex }));
+})
+
 }
 
 // ── WRITE EMAIL STATUS BACK TO SHEET ──────────────────────────
