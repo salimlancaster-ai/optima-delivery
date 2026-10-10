@@ -148,7 +148,37 @@ async function writeEmailStatus(auth, rowIndex, status) {
   } catch (e) {
     console.log('Sheet write error (non-fatal):', e.message);
   }
+}// ── LOG DELIVERY TO DELIVERIES SHEET ──────────────────────────
+async function logDelivery(auth, unit, residentName, email, filename, status) {
+  try {
+    const sheets = google.sheets({ version: 'v4', auth });
+    const timestamp = new Date().toLocaleString('en-US', {
+      timeZone: 'America/Chicago',
+      month: '2-digit', day: '2-digit', year: 'numeric',
+      hour: '2-digit', minute: '2-digit', hour12: true,
+    });
+    const res = await sheets.spreadsheets.values.get({
+      spreadsheetId: SHEET_ID,
+      range: 'Sheet1!A:C',
+    });
+    const rows = res.data.values || [];
+    const match = rows.find(row => row[0] && row[0].toString().trim() === unit.toString().trim());
+    const floor = match ? match[1] : '';
+    const floorGroup = match ? match[2] : '';
+    await sheets.spreadsheets.values.append({
+      spreadsheetId: SHEET_ID,
+      range: 'Deliveries!A:H',
+      valueInputOption: 'RAW',
+      insertDataOption: 'INSERT_ROWS',
+      requestBody: {
+        values: [[timestamp, unit, floor, floorGroup, residentName, email, filename, status]],
+      },
+    });
+  } catch (e) {
+    console.log('Delivery log error (non-fatal):', e.message);
+  }
 }
+
 
 // ── EMAIL TEMPLATE ─────────────────────────────────────────────
 function buildEmailHtml(recipient, unit, filename, photoUrl, deliveryDate, deliveryTime) {
@@ -232,9 +262,11 @@ async function sendConfirmationEmail(recipients, unit, filename, photoUrl, auth)
       });
       console.log('Email sent to:', recipient.email);
       await writeEmailStatus(auth, recipient.rowIndex, 'Delivered');
+await logDelivery(auth, unit, recipient.name, recipient.email, filename, 'Delivered');
     } catch (e) {
       console.log('Email error for', recipient.email, ':', JSON.stringify(e.response ? e.response.body : e.message));
       await writeEmailStatus(auth, recipient.rowIndex, 'Error');
+await logDelivery(auth, unit, recipient.name, recipient.email, filename, 'Error');
     }
   }
 }
